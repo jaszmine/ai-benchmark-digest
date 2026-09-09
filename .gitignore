@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.py[oc]
+
+# Distribution / packaging
+build/
+dist/
+wheels/
+*.egg-info/
+*.egg
+
+# Virtual environments & package managers
+.venv/
+env/
+venv/
+
+# Environment configuration
+.env
+.env.local
+
+# Project-specific caches & generated artifacts
+.date_cache.json
+#*.png
+#*.pdf
+
+# consider ignoring in future to avoid bloat
+#artifacts/*.html
+#artifacts/*.json
+
+# Testing & linting caches
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# IDE & OS-specific files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

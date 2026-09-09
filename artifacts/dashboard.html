@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry & Longitudinal Analysis</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background-color: #0d1117;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #c9d1d9;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 14px; margin-bottom: 24px; }
+    h1 { color: #58a6ff; font-size: 24px; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .chart-card {
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    h2 { color: #f0f6fc; font-size: 15px; margin: 0 0 16px 0; }
+    select {
+      background: #21262d;
+      color: #f0f6fc;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+    table.detail-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    table.detail-table th, table.detail-table td {
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid #21262d;
+    }
+    table.detail-table th { color: #8b949e; }
+    .tag-a { color: #58a6ff; font-weight: 600; }
+    .tag-b { color: #bc8cff; font-weight: 600; }
+    @media (max-width: 850px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>AI Benchmark Telemetry & Longitudinal Analysis</h1>
+      <div class="subtitle">Aggregated across 6 benchmark snapshot(s) in <code>artifacts/</code></div>
+    </div>
+
+    <div class="chart-card">
+      <h2>1. Token Breakdown by Track (Hover for Prompt / CoT / Completion details)</h2>
+      <canvas id="tokensChart" height="90"></canvas>
+    </div>
+
+    <div class="grid-2">
+      <div class="chart-card">
+        <h2>2. Wall-Clock Execution Latency (Seconds)</h2>
+        <canvas id="latencyChart" height="150"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h2>3. Track B Agent Search Efficiency (Tokens / Turn)</h2>
+        <canvas id="efficiencyChart" height="150"></canvas>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="chart-card">
+        <h2>4. Topic & Domain Diversity Bias (Radar)</h2>
+        <canvas id="radarChart" height="150"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h2>5. Top Publisher Attribution Frequency</h2>
+        <canvas id="publisherChart" height="150"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h2>6. Publication Age Delta (Average Days Between Story Publish Date & Benchmark Run)</h2>
+      <canvas id="ageChart" height="75"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2>Article Recency Breakdown</h2>
+        <select id="runSelect" onchange="updateStoryTable(this.value)"></select>
+      </div>
+      <table class="detail-table">
+        <thead>
+          <tr>
+            <th>Track</th>
+            <th>Headline</th>
+            <th>Source</th>
+            <th>Published Date</th>
+            <th>Age Delta</th>
+          </tr>
+        </thead>
+        <tbody id="storyTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const data = {"labels": ["Run 1 (Sep 09, 12:21 PM CDT)", "Run 2 (Sep 09, 12:40 PM CDT)", "Run 3 (Sep 09, 12:53 PM CDT)", "Run 4 (Sep 09, 2:31 PM CDT)", "Run 5 (Sep 09, 2:40 PM CDT)", "Run 6 (Sep 09, 2:55 PM CDT)"], "tokens_stacked": {"track_a": {"prompt": [1274, 1313, 1321, 1279, 1288, 1288], "reasoning": [903, 1003, 1583, 1628, 985, 1620], "completion": [1753, 1656, 2317, 2365, 1902, 2487]}, "track_b": {"prompt": [3596, 1953, 3633, 3608, 3723, 4074], "reasoning": [1260, 1107, 1879, 3412, 3511, 5881], "completion": [2669, 1144, 2992, 4529, 4954, 6593]}}, "latency": {"track_a": [32.5, 24.26, 28.26, 42.07, 23.7, 40.63], "track_b": [55.02, 38.95, 75.38, 59.13, 139.75, 69.25]}, "tokens_per_turn": [2088.3, 1032.3, 2208.3, 2712.3, 2892.3, 3555.7], "category_diversity": {"labels": ["Research & Papers", "Industry & Models", "Infrastructure & Tools", "Policy & Ethics"], "track_a": [25, 0, 5, 0], "track_b": [6, 16, 0, 3]}, "publisher_attribution": {"labels": ["ArXiv", "Techmeme", "CNBC", "Fazm.ai", "TechCrunch", "Scientific American", "hidekazu-konishi.com", "joshuaschultz.com"], "counts": [25, 5, 4, 3, 2, 2, 1, 1]}, "publication_age_delta": [76.1, 2.4, 2.4, 3.1, 3.4, 3.1], "runs_stories": [[{"track": "Track A", "title": "Procedural Graphs: Self-Evolving Execution Structures for LLM Agents", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "It's Not RoPE that Creates Sinks: The Role of Self-Concentration and Value-Non-Mixing in Attention", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "NOAH: Learning the Full Patient Journey. A Longitudinal Multimodal Time-Aware Model for Representation and Forecasting", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "DeCAL: Towards Physically-Grounded Dexterous Vision-Language-Action Models via Contact-Aware Latent Co-Imagination", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "MeClear: Cooperative Game-Theoretic Attribution and Risk-Aware Memory Clearance for Long-Horizon LLM Agents", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track B", "title": "GLM-5.1: 744B Parameter Mixture-of-Experts LLM with 40B Active Weights and 200K Context", "source": "Fazm.ai", "category": "Industry & Models", "date_str": "2026-04-11", "age_days": 151.0}, {"track": "Track B", "title": "Llama 4 Scout: Pioneering 10 Million Token Context Window in Open-Weight LLM", "source": "Fazm.ai", "category": "Industry & Models", "date_str": "2026-04-11", "age_days": 151.0}, {"track": "Track B", "title": "Qwen 3.6-Plus: 1 Million Token Context Open-Weight Model from Alibaba", "source": "Fazm.ai", "category": "Industry & Models", "date_str": "2026-04-11", "age_days": 151.0}, {"track": "Track B", "title": "OpenAI gpt-oss: First Open-Weight Mixture-of-Experts Models from OpenAI under Apache 2.0", "source": "hidekazu-konishi.com", "category": "Industry & Models", "date_str": "2026-07-26", "age_days": 45.0}, {"track": "Track B", "title": "Grok 2.5: 268B Parameter Mixture-of-Experts Model with 128K Context Released under Community License", "source": "joshuaschultz.com", "category": "Industry & Models", "date_str": "2026-01-04", "age_days": 248.0}], [{"track": "Track A", "title": "Procedural Graphs: Self-Evolving Execution Structures for LLM Agents", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Co-Evolving Harnesses and Models: On-Policy Correction Helps Weaker Models Catch Up Where Imitation Fails", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "ReCite: Agentic Reasoning for Faithful Citation", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Measuring LLM Sycophancy under Sustained Multi-Turn Pressure", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Apple unveils the 2nm A20 Pro chip, featuring a 6\u2011core CPU with two \"desktop class\" super cores, a 7\u2011core GPU up to 40% faster, and 32 Neural Engine cores", "source": "Techmeme", "category": "Infrastructure & Tools", "date_str": "Sep 09, 2026", "age_days": 0.0}], [{"track": "Track A", "title": "Measuring LLM Sycophancy under Sustained Multi-Turn Pressure", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Procedural Graphs: Self-Evolving Execution Structures for LLM Agents", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Co-Evolving Harnesses and Models: On-Policy Correction Helps Weaker Models Catch Up Where Imitation Fails", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "ReCite: Agentic Reasoning for Faithful Citation", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Apple unveils the 2nm A20 Pro chip with enhanced Neural Engine for on\u2011device AI", "source": "Techmeme", "category": "Infrastructure & Tools", "date_str": "Sep 09, 2026", "age_days": 0.0}, {"track": "Track B", "title": "AlphaFold 3 Enables Accurate Protein Structure Prediction for Cancer Therapeutics", "source": "The Independent", "category": "Research & Papers", "date_str": "2026-09-08", "age_days": 1.0}, {"track": "Track B", "title": "Isomorphic Labs Launches Clinical Trials of AI\u2011Designed Anticancer Drugs", "source": "Isomorphic Labs", "category": "Industry & Models", "date_str": "2026-09-08", "age_days": 1.0}, {"track": "Track B", "title": "Humanoid Robots Achieve Advanced Simulation Capabilities for Improved Decision\u2011Making", "source": "MarketWatch", "category": "Industry & Models", "date_str": "2026-09-05", "age_days": 4.0}, {"track": "Track B", "title": "Anthropic's Claude Demonstrates Breakthrough in Formal Math Theorem Translation", "source": "MindMatters", "category": "Research & Papers", "date_str": "2026-09-09", "age_days": 0.0}, {"track": "Track B", "title": "OpenAI Unveils Astra Model, Sparking Debate Over Capability and Safety", "source": "TechCrunch", "category": "Industry & Models", "date_str": "2026-09-03", "age_days": 6.0}], [{"track": "Track A", "title": "Measuring LLM Sycophancy under Sustained Multi-Turn Pressure", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Procedural Graphs: Self-Evolving Execution Structures for LLM Agents", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Co-Evolving Harnesses and Models: On-Policy Correction Helps Weaker Models Catch Up Where Imitation Fails", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "ReCite: Agentic Reasoning for Faithful Citation", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Apple unveils the 2nm A20 Pro chip with enhanced Neural Engine for AI workloads", "source": "Techmeme", "category": "Infrastructure & Tools", "date_str": "Sep 09, 2026", "age_days": 0.0}, {"track": "Track B", "title": "OpenAI releases GPT-6 Astra, a cybersecurity\u2011focused large language model", "source": "CNBC", "category": "Industry & Models", "date_str": "Sep 03, 2026", "age_days": 6}, {"track": "Track B", "title": "Industry warns of 'model fatigue' as AI labs accelerate release cadence", "source": "CNBC", "category": "Industry & Models", "date_str": "Sep 03, 2026", "age_days": 6}, {"track": "Track B", "title": "Mizzou researchers advance AI\u2011driven biomedical discovery toward a virtual cell", "source": "University of Missouri (ShowMe)", "category": "Research & Papers", "date_str": "2026-09-09", "age_days": 0.0}, {"track": "Track B", "title": "OpenAI claims internal model disproves Navier\u2011Stokes smoothness hypothesis", "source": "Scientific American", "category": "Research & Papers", "date_str": "2026-09-08", "age_days": 1.0}, {"track": "Track B", "title": "Breztri launches AI\u2011generated llama\u2011themed ads that break pharma advertising tropes", "source": "MediaPost", "category": "Industry & Models", "date_str": "2026-09-03", "age_days": 6.0}], [{"track": "Track A", "title": "Measuring LLM Sycophancy under Sustained Multi-Turn Pressure", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Procedural Graphs: Self-Evolving Execution Structures for LLM Agents", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Co-Evolving Harnesses and Models: On-Policy Correction Helps Weaker Models Catch Up Where Imitation Fails", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "ReCite: Agentic Reasoning for Faithful Citation", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Apple unveils the 2nm A20 Pro, featuring a 6-core CPU with two 'desktop class' super cores, a 7-core GPU up to 40% faster, and 32 Neural Engine cores in total", "source": "Techmeme", "category": "Infrastructure & Tools", "date_str": "Sep 09, 2026", "age_days": 0.0}, {"track": "Track B", "title": "AI Models Induce Measurable Neural Plasticity in Users", "source": "MediatPost", "category": "Policy & Ethics", "date_str": "2026-09-08", "age_days": 1.0}, {"track": "Track B", "title": "OpenAI Unveils Astra, a GPT\u20116\u2011Class Multimodal Model", "source": "TechCrunch", "category": "Industry & Models", "date_str": "2026-09-03", "age_days": 6.0}, {"track": "Track B", "title": "Researchers Struggle to Decode AI\u2019s Internal Reasoning", "source": "Axios", "category": "Research & Papers", "date_str": "Sep 03, 2026", "age_days": 6}, {"track": "Track B", "title": "One\u2011Week Flood of Major AI Model Releases Triggers Industry Fatigue", "source": "StartupFortune", "category": "Industry & Models", "date_str": "2026-09-06", "age_days": 3.0}, {"track": "Track B", "title": "OpenAI Rolls Out Astra with Explicit Cyber\u2011Capability Warning", "source": "CNBC", "category": "Policy & Ethics", "date_str": "Sep 03, 2026", "age_days": 6}], [{"track": "Track A", "title": "Measuring LLM Sycophancy under Sustained Multi-Turn Pressure", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Procedural Graphs: Self-Evolving Execution Structures for LLM Agents", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Co-Evolving Harnesses and Models: On-Policy Correction Helps Weaker Models Catch Up Where Imitation Fails", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "ReCite: Agentic Reasoning for Faithful Citation", "source": "ArXiv", "category": "Research & Papers", "date_str": "Sep 2026", "age_days": 3}, {"track": "Track A", "title": "Apple unveils the 2nm A20 Pro chip with 6-core CPU, 7-core GPU, and 32 Neural Engine cores", "source": "Techmeme", "category": "Infrastructure & Tools", "date_str": "Sep 09, 2026", "age_days": 0.0}, {"track": "Track B", "title": "AI System Controls Fusion Plasma at Superhuman Speeds", "source": "Princeton University", "category": "Research & Papers", "date_str": "Thu, 03 Sep", "age_days": 6.0}, {"track": "Track B", "title": "OpenAI Internal Model Declares Navier-Stokes Equations Fatally Flawed", "source": "Scientific American", "category": "Industry & Models", "date_str": "Tue, 08 Sep", "age_days": 1.0}, {"track": "Track B", "title": "Google\u2019s Gemini 3.8 Flash Launch Ends Year\u2011Long AI Losing Streak", "source": "CNBC", "category": "Industry & Models", "date_str": "Thu, 03 Sep", "age_days": 6.0}, {"track": "Track B", "title": "Frontier Model Week Sees GPT\u20116 Astra Rivaled by Anthropic, Meta, Google Releases", "source": "CNET", "category": "Industry & Models", "date_str": "Thu, 03 Sep", "age_days": 6.0}, {"track": "Track B", "title": "OpenAI\u2019s New Internal Model Surpasses Astra, Forgoes Million\u2011Dollar Math Prize", "source": "Technology Review", "category": "Policy & Ethics", "date_str": "Wed, 09 Sep", "age_days": 0.0}]]};
+
+    new Chart(document.getElementById('tokensChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: data.labels,
+        datasets: [
+          { label: 'Track A: Prompt', data: data.tokens_stacked.track_a.prompt, backgroundColor: '#1f6feb', stack: 'Track A' },
+          { label: 'Track A: Reasoning', data: data.tokens_stacked.track_a.reasoning, backgroundColor: '#388bfd', stack: 'Track A' },
+          { label: 'Track A: Completion', data: data.tokens_stacked.track_a.completion, backgroundColor: '#79c0ff', stack: 'Track A' },
+          { label: 'Track B: Prompt', data: data.tokens_stacked.track_b.prompt, backgroundColor: '#8957e5', stack: 'Track B' },
+          { label: 'Track B: Reasoning', data: data.tokens_stacked.track_b.reasoning, backgroundColor: '#ab7df8', stack: 'Track B' },
+          { label: 'Track B: Completion', data: data.tokens_stacked.track_b.completion, backgroundColor: '#d2a8ff', stack: 'Track B' }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          tooltip: { callbacks: { label: (c) => c.dataset.label + ': ' + c.parsed.y.toLocaleString() + ' tokens' } },
+          legend: { labels: { color: '#c9d1d9', font: { size: 10 } } }
+        },
+        scales: {
+          x: { stacked: true, ticks: { color: '#8b949e', maxRotation: 20 }, grid: { color: '#21262d' } },
+          y: { stacked: true, ticks: { color: '#8b949e' }, grid: { color: '#21262d' } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('latencyChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: data.labels,
+        datasets: [
+          { label: 'Track A (Deterministic)', data: data.latency.track_a, backgroundColor: '#58a6ff' },
+          { label: 'Track B (Autonomous ReAct)', data: data.latency.track_b, backgroundColor: '#bc8cff' }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          tooltip: { callbacks: { label: (c) => c.dataset.label + ': ' + c.parsed.y.toFixed(2) + 's' } },
+          legend: { labels: { color: '#c9d1d9' } }
+        },
+        scales: {
+          x: { ticks: { color: '#8b949e', maxRotation: 25 }, grid: { color: '#21262d' } },
+          y: { ticks: { color: '#8b949e' }, grid: { color: '#21262d' } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('efficiencyChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Track B Tokens / Agent Turn',
+          data: data.tokens_per_turn,
+          borderColor: '#f0883e',
+          backgroundColor: 'rgba(240, 136, 62, 0.15)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          tooltip: { callbacks: { label: (c) => c.parsed.y.toLocaleString() + ' tokens / turn' } },
+          legend: { labels: { color: '#c9d1d9' } }
+        },
+        scales: {
+          x: { ticks: { color: '#8b949e', maxRotation: 25 }, grid: { color: '#21262d' } },
+          y: { ticks: { color: '#8b949e' }, grid: { color: '#21262d' } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('radarChart').getContext('2d'), {
+      type: 'radar',
+      data: {
+        labels: data.category_diversity.labels,
+        datasets: [
+          {
+            label: 'Track A (Deterministic)',
+            data: data.category_diversity.track_a,
+            backgroundColor: 'rgba(88, 166, 255, 0.25)',
+            borderColor: '#58a6ff',
+            pointBackgroundColor: '#58a6ff'
+          },
+          {
+            label: 'Track B (Autonomous ReAct)',
+            data: data.category_diversity.track_b,
+            backgroundColor: 'rgba(188, 140, 255, 0.25)',
+            borderColor: '#bc8cff',
+            pointBackgroundColor: '#bc8cff'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          r: {
+            grid: { color: '#30363d' },
+            angleLines: { color: '#30363d' },
+            pointLabels: { color: '#c9d1d9', font: { size: 11 } },
+            ticks: { display: false }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: '#c9d1d9' } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('publisherChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: data.publisher_attribution.labels,
+        datasets: [{
+          label: 'Stories Surfaced',
+          data: data.publisher_attribution.counts,
+          backgroundColor: '#238636',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: (c) => c.parsed.x + ' stories' } }
+        },
+        scales: {
+          x: { ticks: { color: '#8b949e', stepSize: 1 }, grid: { color: '#21262d' } },
+          y: { ticks: { color: '#c9d1d9' }, grid: { display: false } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('ageChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Avg Days Since Published',
+          data: data.publication_age_delta,
+          backgroundColor: '#d29922',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: (c) => c.parsed.y !== null ? c.parsed.y + ' days old' : 'No date data available'
+            }
+          },
+          legend: { labels: { color: '#c9d1d9' } }
+        },
+        scales: {
+          x: { ticks: { color: '#8b949e', maxRotation: 20 }, grid: { color: '#21262d' } },
+          y: {
+            min: 0,
+            suggestedMax: 7,
+            ticks: { color: '#8b949e' },
+            grid: { color: '#21262d' },
+            title: { display: true, text: 'Days', color: '#8b949e' }
+          }
+        }
+      }
+    });
+
+    const selectElem = document.getElementById('runSelect');
+    data.labels.forEach((label, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = label;
+      selectElem.appendChild(opt);
+    });
+
+    selectElem.value = data.labels.length - 1;
+
+    function updateStoryTable(runIdx) {
+      const tbody = document.getElementById('storyTableBody');
+      tbody.innerHTML = '';
+      const stories = data.runs_stories[runIdx] || [];
+      stories.forEach(s => {
+        const row = document.createElement('tr');
+        const trackClass = s.track === 'Track A' ? 'tag-a' : 'tag-b';
+        const ageDisplay = s.age_days !== 'N/A' ? s.age_days + 'd' : '—';
+        row.innerHTML = `
+          <td class="${trackClass}">${s.track}</td>
+          <td>${s.title}</td>
+          <td>${s.source}</td>
+          <td>${s.date_str}</td>
+          <td><strong>${ageDisplay}</strong></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    updateStoryTable(selectElem.value);
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+name: AI Benchmark Telemetry Pipeline
+
+on:
+  schedule:
+    # Runs at 13:00 UTC (8:00 AM CDT) every Monday and Thursday
+    - cron: '0 13 * * 1,4'
+  workflow_dispatch:
+
+jobs:
+  run-benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install Dependencies
+        run: |
+          uv venv
+          uv pip install -e .
+
+      - name: Execute Benchmark Pipeline
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_BASE_URL: "https://openrouter.ai/api/v1"
+          MODEL_NAME: "nvidia/nemotron-3-super-120b-a12b:free"
+          APP_REFERER: "https://github.com/${{ github.repository }}"
+          APP_TITLE: "AI Benchmark Digest"
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFICATION_EMAIL_TO: ${{ secrets.NOTIFICATION_EMAIL_TO }}
+          NOTIFICATION_EMAIL_FROM: ${{ secrets.NOTIFICATION_EMAIL_FROM }}
+          LOOKBACK_DAYS: 7
+          MAX_TRACK_B_TURNS: 3
+          INTER_TURN_SLEEP_SECONDS: 3.0
+          INTER_TRACK_PAUSE_SECONDS: 15.0
+        run: |
+          source .venv/bin/activate
+          python -c "import asyncio; from src.main import orchestrate_benchmark; asyncio.run(orchestrate_benchmark(send_email=True))"

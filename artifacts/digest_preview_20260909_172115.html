@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th, .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; }
+    .table-bench th { color: #8b949e; font-weight: 600; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 4px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Track A (Deterministic)</th>
+            <th>Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Wall Clock Latency</td>
+            <td><strong>32.5s</strong></td>
+            <td><strong>55.02s</strong></td>
+          </tr>
+          <tr>
+            <td>Input / Prompt Tokens</td>
+            <td>1274</td>
+            <td>3596</td>
+          </tr>
+          <tr>
+            <td>Reasoning (CoT) Tokens</td>
+            <td>903</td>
+            <td>1260</td>
+          </tr>
+          <tr>
+            <td>Completion Tokens</td>
+            <td>1753</td>
+            <td>2669</td>
+          </tr>
+          <tr>
+            <td>Total Tokens Consumed</td>
+            <td>3027</td>
+            <td>6265</td>
+          </tr>
+          <tr>
+            <td>Agentic Iterations / Turns</td>
+            <td>1 (Single-pass)</td>
+            <td>3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 8/8 valid (100.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive">
+      <h4>Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary">GLM-5.1 exemplifies the next generation of scalable open‑weight language models through a meticulously designed Mixture‑of‑Experts (MoE) architecture. The model comprises 744B total parameters organized into 64 expert layers, each layer containing 128 experts; a learned router selects only two experts per token, yielding an active parameter count of roughly 40B. This sparse activation drastically reduces FLOPs per token compared to dense counterparts of similar size, enabling training on massive corpora with feasible compute budgets. To support the 200K‑token context window, GLM-5.1 employs rotary position embeddings (RoPE) with extended frequency bases and a hierarchical chunk‑wise attention mechanism that caches key/value states in GPU memory, minimizing recomputation during autoregressive generation. Latency‑compute tradeoffs are managed via expert‑level parallelism: experts are distributed across GPU nodes, and the router’s dispatch is overlapped with matrix multiplications, keeping per‑step latency comparable to 13B‑dense models while delivering far higher expressive power. The MIT‑licensed release of full weights democratizes access to this scale, allowing researchers to experiment with expert pruning, knowledge distillation, and specialized fine‑tuning without the prohibitive costs of training from scratch. Practically, GLM-5.1 pushes the frontier for long‑document understanding, few‑shot reasoning, and retrieval‑augmented workflows, setting a new standard for openness in frontier‑scale LLMs.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.09153v1" class="story-title" target="_blank">Procedural Graphs: Self-Evolving Execution Structures for LLM Agents</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: ArXiv &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Introduces Procedural Graphs, a dynamic graph-based execution structure that allows LLM agents to self-modify their action plans over long horizons. By representing intermediate states and tool calls as evolving nodes and edges, the method enables adaptive replanning without unconstrained token generation. Experiments show improved success rates on multi-step tool-use benchmarks compared to baseline agents.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.09085v1" class="story-title" target="_blank">It&#39;s Not RoPE that Creates Sinks: The Role of Self-Concentration and Value-Non-Mixing in Attention</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: ArXiv &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Challenges the common belief that Rotary Position Embeddings (RoPE) cause attention sinks and massive activations at the first token. Through ablation and theoretical analysis, the paper shows that self‑concentration of query/key vectors and lack of value mixing are the primary drivers. The findings suggest alternative architectural tweaks to mitigate sink effects and stabilize training of long‑context LLMs.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.09140v1" class="story-title" target="_blank">NOAH: Learning the Full Patient Journey. A Longitudinal Multimodal Time-Aware Model for Representation and Forecasting</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: ArXiv &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Presents NOAH, a transformer‑based model that ingests irregularly sampled electronic health records, imaging, and lab results to learn a unified patient trajectory over a lifetime. The model incorporates time‑aware positional encodings and a hierarchical masking strategy to handle missing modalities. On benchmark forecasting tasks (e.g., disease onset, readmission), NOAH outperforms prior state‑of‑the‑art methods by significant margins.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.09119v1" class="story-title" target="_blank">DeCAL: Towards Physically-Grounded Dexterous Vision-Language-Action Models via Contact-Aware Latent Co-Imagination</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: ArXiv &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Proposes DeCAL, a vision‑language‑action framework that learns to imagine contact‑rich interactions in a latent space before executing dexterous manipulations. By co‑imagining hand‑object contacts and visual features, the model reduces reliance on dense tactile sensing and improves generalization across novel objects and tasks. Real‑world robot experiments demonstrate higher success rates in fine‑grained assembly and tool use compared to prior VLA baselines.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.09115v1" class="story-title" target="_blank">MeClear: Cooperative Game-Theoretic Attribution and Risk-Aware Memory Clearance for Long-Horizon LLM Agents</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: ArXiv &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Introduces MeClear, a principled method for deciding what to retain or discard in an LLM agent’s external memory over extended interactions. Using cooperative game theory, it assigns attribution scores to memory entries based on their contribution to future reward, while a risk‑aware component penalizes potentially harmful forgetting. Agents equipped with MeClear show better long‑term coherence and lower drift on multi‑session dialogue and task benchmarks.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://fazm.ai/blog/new-llm-releases-april-2026" class="story-title" target="_blank">GLM-5.1: 744B Parameter Mixture-of-Experts LLM with 40B Active Weights and 200K Context</a>
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Fazm.ai &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">GLM-5.1 introduces a 744B-parameter MoE model where only 40B parameters are active per token, enabling massive scale with efficient compute. It supports a 200K-token context window and is released under the MIT license with open weights, setting a new benchmark for openness and scalability in large language models.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://fazm.ai/blog/new-llm-releases-april-2026" class="story-title" target="_blank">Llama 4 Scout: Pioneering 10 Million Token Context Window in Open-Weight LLM</a>
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Fazm.ai &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Meta&#39;s Llama 4 Scout extends the context window to an unprecedented 10M tokens while keeping model size undisclosed, demonstrating advanced positional encoding and memory compression techniques. Released under the Llama License, it pushes the boundaries of long‑document understanding and retrieval‑augmented generation.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://fazm.ai/blog/new-llm-releases-april-2026" class="story-title" target="_blank">Qwen 3.6-Plus: 1 Million Token Context Open-Weight Model from Alibaba</a>
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Fazm.ai &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Alibaba&#39;s Qwen 3.6-Plus offers a 1M‑token context window with undisclosed total size, leveraging efficient sparse attention and rotary embeddings to maintain performance at extreme lengths. The model is distributed under an open license, providing researchers with a powerful tool for long‑form tasks.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://hidekazu-konishi.com/entry/open_weights_llm_release_history_and_timeline.html" class="story-title" target="_blank">OpenAI gpt-oss: First Open-Weight Mixture-of-Experts Models from OpenAI under Apache 2.0</a>
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: hidekazu-konishi.com &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">In August 2025 OpenAI released gpt-oss-120b and gpt-oss-20b, its inaugural open‑weight MoE models featuring adjustable reasoning effort and trained under the Apache 2.0 license. These models mark a strategic shift toward openness while retaining strong reasoning capabilities.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://joshuaschultz.com/cheatsheets/open-weight-models-2026" class="story-title" target="_blank">Grok 2.5: 268B Parameter Mixture-of-Experts Model with 128K Context Released under Community License</a>
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: joshuaschultz.com &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">xAI&#39;s Grok 2.5 scales to 268B parameters using a MoE layout with 128K-token context, released under a revocable Grok Community license. The model balances massive expert capacity with routing efficiency, aiming to advance general reasoning while maintaining accessible weights.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>

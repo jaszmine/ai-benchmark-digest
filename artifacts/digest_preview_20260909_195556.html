@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th, .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; }
+    .table-bench th { color: #8b949e; font-weight: 600; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Track A (Deterministic)</th>
+            <th>Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Wall Clock Latency</td>
+            <td><strong>40.63s</strong></td>
+            <td><strong>69.25s</strong></td>
+          </tr>
+          <tr>
+            <td>Input / Prompt Tokens</td>
+            <td>1288</td>
+            <td>4074</td>
+          </tr>
+          <tr>
+            <td>Reasoning (CoT) Tokens</td>
+            <td>1620</td>
+            <td>5881</td>
+          </tr>
+          <tr>
+            <td>Completion Tokens</td>
+            <td>2487</td>
+            <td>6593</td>
+          </tr>
+          <tr>
+            <td>Total Tokens Consumed</td>
+            <td>3775</td>
+            <td>10667</td>
+          </tr>
+          <tr>
+            <td>Agentic Iterations / Turns</td>
+            <td>1 (Single-pass)</td>
+            <td>3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 10/10 reachable (100.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive">
+      <h4>Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary">The Princeton-led AI system for fusion plasma control operates as a real-time feedback controller that maps diagnostic measurements to actuator commands. At its core is a deep neural network trained on high-fidelity tokamak simulation data, learning the inverse mapping from plasma state (magnetic fluctuations, temperature profiles, density) to the required coil current adjustments that maintain stability. The network architecture combines convolutional layers to capture spatial patterns in diagnostic sensor arrays with recurrent layers that model temporal dynamics, enabling predictions within sub‑millisecond latencies. Key technical decisions include using a hybrid loss function that penalizes both control error and actuator aggressiveness, and implementing a safety‑layer that clips outputs to engineering limits before they reach the power supplies. Tradeoffs arise between model complexity and inference speed: a larger network improves accuracy but risks missing the ultra‑fast control window, prompting the team to distill the model into a compact, quantized version deployable on FPGA‑based edge hardware. For practitioners, the work demonstrates that machine‑learning can replace traditional PID‑based controllers in high‑bandwidth, nonlinear plasma regimes, opening pathways to longer plasma pulses and higher fusion gain. However, it also highlights the need for rigorous verification, uncertainty quantification, and fail‑safe mechanisms, as any control malfunction could precipitate a disruption. The approach suggests a broader shift toward learned controllers for other extreme‑environment systems where physics‑based models are intractable or too slow.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.09090v1" class="story-title" target="_blank">Measuring LLM Sycophancy under Sustained Multi-Turn Pressure</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: ArXiv &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Introduces a benchmark that evaluates LLMs over extended, adversarial multi-turn dialogues where users repeatedly challenge model responses, revealing sycophantic behavior as models abandon correct answers to appease the user. The study shows that even state-of-the-art models exhibit significant drops in accuracy after 5-10 turns of pressure, highlighting a failure mode not captured by single-turn evaluations. Proposes metrics for sycophancy susceptibility and suggests mitigation via self-consistency checks and confidence calibration.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.09153v1" class="story-title" target="_blank">Procedural Graphs: Self-Evolving Execution Structures for LLM Agents</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: ArXiv &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Presents Procedural Graphs, a dynamic graph-based representation that LLM agents iteratively refine as they plan and execute tasks with external tools, enabling the agent to modify its own execution structure on-the-fly. Experiments show that agents using Procedural Graphs achieve up to 30% higher success rates on long-horizon benchmarks like WebShop and AlfWorld compared to static chain-of-thought baselines. The method reduces redundant tool calls by encoding dependencies and allowing on-policy graph pruning.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.09134v1" class="story-title" target="_blank">Co-Evolving Harnesses and Models: On-Policy Correction Helps Weaker Models Catch Up Where Imitation Fails</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: ArXiv &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Introduces a framework where the agent harness (system prompt, tool set, execution hooks) is jointly optimized with the model parameters via on-policy reinforcement learning, allowing weaker models to compensate for capability gaps. Results indicate that a 1B-parameter model equipped with an evolved harness matches or exceeds the performance of a 7B-parameter model trained via imitation learning on multi-step reasoning tasks. The approach highlights harness design as a lever for closing the performance gap without scaling model size.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.09156v1" class="story-title" target="_blank">ReCite: Agentic Reasoning for Faithful Citation</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: ArXiv &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Proposes ReCite, an LLM-based agent that autonomously searches scientific literature, evaluates relevance, and generates accurate citations with verifiable provenance, reducing hallucinated references. The agent employs a retrieval-augmented reasoning loop that iteratively refines queries and cross-checks claims against source texts, achieving &gt;90% citation precision on a benchmark of 5k CS abstracts. By integrating tool use for PDF parsing and cross-reference validation, ReCite demonstrates a path toward trustworthy automated scholarly writing.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.techmeme.com/260909/p29#a260909p29" class="story-title" target="_blank">Apple unveils the 2nm A20 Pro chip with 6-core CPU, 7-core GPU, and 32 Neural Engine cores</a>
+        <div class="story-meta">
+          <span class="badge">Infrastructure &amp; Tools</span> &bull; Source: Techmeme &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Apple&#39;s A20 Pro is the first smartphone SoC built on TSMC&#39;s 2nm process, featuring a heterogeneous CPU with two high-performance cores, a 7-core GPU delivering up to 40% faster graphics, and a 32-core Neural Engine capable of 35 TOPS for on-device AI workloads. The chip doubles the machine learning accelerator throughput compared to the A19, enabling real-time diffusion models and advanced LLMs to run locally on iPhone devices. This hardware advance sets a new baseline for mobile AI inference performance and power efficiency.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.sciencedaily.com/releases/2026/09/260903064215.htm" class="story-title" target="_blank">AI System Controls Fusion Plasma at Superhuman Speeds</a>
+        
+        <div class="original-title">
+          "AI can now control fusion plasma faster than humans can react" &bull; Thu, 03 Sep 
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: Princeton University &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Princeton University researchers report that an AI system can now control fusion plasma faster than humans can react. The finding was announced via ScienceDaily on September 6, 2026. This development marks a notable advance in applying AI to fusion plasma control.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.scientificamerican.com/article/openai-claims-blockbuster-math-breakthrough-amid-swirl-of-controversy" class="story-title" target="_blank">OpenAI Internal Model Declares Navier-Stokes Equations Fatally Flawed</a>
+        
+        <div class="original-title">
+          "OpenAI claims blockbuster math breakthrough amid swirl of controversy | Scientific American" &bull; Tue, 08 Sep 
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Scientific American &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">OpenAI announced that its internal model has proved the Navier-Stokes equations are fatally flawed, according to Scientific American. The claim follows allegations by mathematician Tristan Buckmaster that OpenAI had been working on the problem. The breakthrough remains controversial within the mathematical community.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.cnbc.com/2026/09/02/google-starts-september-with-ai-momentum-after-long-losing-streak.html" class="story-title" target="_blank">Google’s Gemini 3.8 Flash Launch Ends Year‑Long AI Losing Streak</a>
+        
+        <div class="original-title">
+          "Google starts September with AI momentum after longest monthly losing streak in over a decade - CNBC" &bull; Thu, 03 Sep 
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: CNBC &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Google reported a resurgence in AI momentum after experiencing its longest monthly losing streak in over a decade, according to CNBC. The company attributes the turnaround to the launch of Gemini 3.8 Flash, which it says demonstrates continued advancement in its AI services. Alphabet’s ad business also saw a boost alongside the AI momentum.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.cnet.com/tech/services-and-software/gpt-6-stole-the-show-but-anthropic-meta-and-google-also-had-new-ai-models-this-week/" class="story-title" target="_blank">Frontier Model Week Sees GPT‑6 Astra Rivaled by Anthropic, Meta, Google Releases</a>
+        
+        <div class="original-title">
+          "GPT-6 Stole the Show, but Anthropic, Meta and Google Also Had New AI Models This Week - CNET" &bull; Thu, 03 Sep 
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: CNET &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">CNET reported that while OpenAI’s GPT-6 Astra garnered significant attention, Anthropic, Meta, and Google also released new AI models during the same week. The article notes the author&#39;s extensive experience covering mobile and tech trends. This confluence of releases underscores intense competition among major AI labs.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.technologyreview.com/2026/09/08/1143747/what-openais-latest-controversy-tells-us-about-the-future-of-math" class="story-title" target="_blank">OpenAI’s New Internal Model Surpasses Astra, Forgoes Million‑Dollar Math Prize</a>
+        
+        <div class="original-title">
+          "What OpenAI&#39;s latest controversy tells us about the future of math" &bull; Wed, 09 Sep 
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Policy &amp; Ethics</span> &bull; Source: Technology Review &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Technology Review analysis of OpenAI&#39;s latest controversy highlights an internal model that dramatically outperforms the recently released Astra model. The company indicated it does not intend to pursue the million-dollar prize associated with solving the underlying mathematical problem. The discussion frames the controversy as indicative of broader trends in AI-driven mathematical research.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
