@@ -107,6 +107,8 @@
           Source: {{ story.source }}
           {% if ("ArXiv" in story.source or "arxiv" in story.url) and story.upvotes %}
             &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; {{ story.upvotes }} upvotes</span>
+          {% elif "Hacker News" in story.source and story.upvotes %}
+            &bull; <span style="color: #ff6600; font-weight: 600;">&#9650; {{ story.upvotes }} points</span>
           {% endif %}
           &bull;
           {% set link_info = links.get(story.url, {}) %}
