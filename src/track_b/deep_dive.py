@@ -1,10 +1,13 @@
 import json
+import re
 import time
 from urllib.parse import urlparse, urlunparse
-from langchain_core.messages import SystemMessage, HumanMessage
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from json_repair import repair_json
+from langchain_core.messages import HumanMessage, SystemMessage
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+
 from src.config import get_settings
-from src.schemas import TrackOutput, StoryItem
+from src.schemas import StoryItem, TrackOutput
 from src.track_a.pipeline import get_llm
 from src.track_b.agent import build_research_graph, update_token_metrics
 from src.track_b.state import AgentState, TokenTracker
@@ -20,6 +23,9 @@ Strict Constraints:
 - Every story MUST have a completely UNIQUE canonical URL.
 - Retain the exact "Original Title" and "Published Date" verbatim from the research notes.
 - Grounding: Your 2-3 sentence summary MUST reflect only what is actually reported in the excerpt. Do NOT invent evaluations, synthetic model links, or claims not present in the notes.
+- CRITICAL REQUIREMENT: You must extract and return exactly 5 distinct stories in the 'stories' list. Never return fewer than 5.
+- SYNTAX: Return strictly valid JSON. Avoid trailing commas and properly escape double quotes inside text.
+- ABSOLUTE PROHIBITION ON GENERATED URLS: You are strictly forbidden from fabricating, predicting, or constructing URL paths. The 'url' field MUST be copied character-for-character from the 'URL: ...' field in the Research Notes. If a candidate in the notes lacks a full URL, do not include it.
 
 Return valid JSON matching this schema:
 {{
@@ -45,6 +51,53 @@ Research Notes:
 def normalize_url(url: str) -> str:
     parsed = urlparse(url)
     return urlunparse((parsed.scheme, parsed.netloc, parsed.path.rstrip("/"), "", "", ""))
+
+
+def robust_json_decode(raw_text: str) -> dict:
+    """Tolerant JSON parser tailored for LLM outputs."""
+    cleaned = raw_text.strip()
+    if "```json" in cleaned:
+        cleaned = cleaned.split("```json")[1].split("```")[0].strip()
+    elif "```" in cleaned:
+        cleaned = cleaned.split("```")[1].split("```")[0].strip()
+
+    # Pass 1: Standard load
+    try:
+        return json.loads(cleaned)
+    except Exception:
+        pass
+
+    # Pass 2: Outermost boundary slicing
+    start = cleaned.find("{")
+    end = cleaned.rfind("}")
+    if start != -1 and end != -1 and end > start:
+        sliced = cleaned[start : end + 1]
+        try:
+            return json.loads(sliced)
+        except Exception:
+            pass
+
+        # Pass 3: Strip trailing commas before braces or brackets
+        sans_trailing_commas = re.sub(r",\s*([\]}])", r"\1", sliced)
+        try:
+            return json.loads(sans_trailing_commas)
+        except Exception:
+            pass
+
+        # Pass 4: json-repair engine
+        try:
+            repaired = repair_json(sliced, return_objects=True)
+            if isinstance(repaired, dict):
+                return repaired
+        except Exception:
+            pass
+
+    # Pass 5: Direct string repair as last line of defense
+    repaired_all = repair_json(cleaned, return_objects=True)
+    if isinstance(repaired_all, dict):
+        return repaired_all
+
+    raise ValueError(f"Failed to parse or repair JSON from model output:\n{cleaned[:500]}...")
 
 
 @retry(
@@ -96,7 +149,9 @@ async def run_track_b() -> tuple[TrackOutput, dict]:
     formatted_synth_prompt = SYNTHESIS_PROMPT_TEMPLATE.format(notes=pruned_context)
 
     synth_messages = [
-        SystemMessage(content="You format synthesized AI research into strict structured JSON with unique URLs."),
+        SystemMessage(
+            content="You format synthesized AI research into strict structured JSON with unique URLs."
+        ),
         HumanMessage(content=formatted_synth_prompt),
     ]
 
@@ -106,21 +161,26 @@ async def run_track_b() -> tuple[TrackOutput, dict]:
 
     elapsed = time.perf_counter() - start_time
 
-    content = synth_resp.content
-    if "```json" in content:
-        content = content.split("```json")[1].split("```")[0].strip()
-    elif "```" in content:
-        content = content.split("```")[1].split("```")[0].strip()
-
-    parsed = json.loads(content)
+    # Robust parsing
+    parsed = robust_json_decode(synth_resp.content)
 
     seen_urls = set()
     deduped_stories: list[StoryItem] = []
     for raw_item in parsed.get("stories", []):
+        # Defensive fill if model missed schema keys
+        if not raw_item.get("source"):
+            raw_item["source"] = "Industry & Models"
+        if not raw_item.get("category"):
+            raw_item["category"] = "Industry & Models"
+
         canon_url = normalize_url(raw_item.get("url", ""))
         if canon_url and canon_url not in seen_urls:
             seen_urls.add(canon_url)
-            deduped_stories.append(StoryItem(**raw_item))
+            try:
+                deduped_stories.append(StoryItem(**raw_item))
+            except Exception as item_err:
+                print(f"[Track B] Skipping malformed story item: {item_err}")
+
         if len(deduped_stories) == settings.story_cap:
             break
 
@@ -136,4 +196,6 @@ async def run_track_b() -> tuple[TrackOutput, dict]:
         "agent_turns": final_state["turn_count"],
     }
 
-    return TrackOutput(track_name="Track B", stories=deduped_stories, deep_dive=deep_dive), telemetry_report
+    return TrackOutput(
+        track_name="Track B", stories=deduped_stories, deep_dive=deep_dive
+    ), telemetry_report

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th, .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; }
+    .table-bench th { color: #8b949e; font-weight: 600; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Track A (Deterministic)</th>
+            <th>Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Wall Clock Latency</td>
+            <td><strong>26.06s</strong></td>
+            <td><strong>41.78s</strong></td>
+          </tr>
+          <tr>
+            <td>Input / Prompt Tokens</td>
+            <td>863</td>
+            <td>3415</td>
+          </tr>
+          <tr>
+            <td>Reasoning (CoT) Tokens</td>
+            <td>1099</td>
+            <td>1213</td>
+          </tr>
+          <tr>
+            <td>Completion Tokens</td>
+            <td>1319</td>
+            <td>2033</td>
+          </tr>
+          <tr>
+            <td>Total Tokens Consumed</td>
+            <td>2182</td>
+            <td>5448</td>
+          </tr>
+          <tr>
+            <td>Agentic Iterations / Turns</td>
+            <td>1 (Single-pass)</td>
+            <td>3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 5/5 reachable (100.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive">
+      <h4>Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary">The most significant development highlighted in the notes is the steady improvement of models’ agentic capacity since the debut of the o1 series in late 2024. Agentic capacity refers to a model’s ability to act autonomously over extended time horizons, decompose high‑level goals into sub‑tasks, retain and update internal state, and invoke external tools or APIs as needed. The o1 models likely introduced a hierarchical reinforcement‑learning framework where a high‑level planner proposes sub‑goals, while a low‑level executor handles short‑horizon actions using a fine‑tuned policy network. Key technical decisions include the use of recurrent memory modules (e.g., transformer‑augmented with a differentiable neural cache) to preserve context across thousands of steps, and a curriculum‑based training regime that gradually increases task horizon length. Tradeoffs involve higher inference latency and greater computational cost due to the need for recurrent state updates and occasional tool calls, which can affect real‑time applicability. For practitioners, the advance means that complex workflows—such as multi‑step scientific experimentation, long‑form code generation, or sustained customer‑service dialogues—can now be delegated to a single model with reduced need for hard‑coded orchestration layers, prompting a shift toward more flexible, model‑centric system designs.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.theinformation.com/articles/jeffrey-katzenberg-teams-former-openai-sora-head-new-ai-video-startup" class="story-title" target="_blank">Katzenberg, ex-OpenAI Sora lead launch AI video model startup for filmmakers</a>
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Techmeme &bull;
+          
+          <span class="tag-protected">&#9888; Protected (403)</span>
+          
+        </div>
+        <div class="story-summary">The team, including former OpenAI Sora lead Bill Peebles and ex-Dropbox CFO Sujay Jaswa, is forming a startup to train generative video models specifically for filmmakers. Leveraging large-scale diffusion or transformer architectures, the effort aims to produce high-fidelity, controllable video content that could streamline visual effects and democratize Hollywood‑grade production pipelines.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://techcrunch.com/2026/09/09/apples-revamped-health-app-will-calculate-your-health-age-and-readiness-score/" class="story-title" target="_blank">Apple introduces AI-powered Health app with readiness and Health Age metrics</a>
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Techmeme &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Apple’s upcoming Health app integrates Apple Intelligence to deliver personalized insights, a readiness score, and a Health Age metric derived from on‑device machine learning that analyzes activity, sleep, and vital signs. The feature exemplifies Apple’s push for proactive health monitoring using AI, setting a new benchmark for consumer health technology.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://time.com/article/2026/09/09/ai-is-at-a-turning-point" class="story-title" target="_blank">AI Agentic Capacity Advances with o1 Models Enabling Complex Long‑Duration Planning</a>
+        
+        <div class="original-title">
+          "AI Is at a Turning Point" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: Time &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">The excerpt notes that models’ agentic capacity has steadily improved since the release of o1 models in late 2024. This enhanced agency allows models to manage increasingly complex, long‑duration tasks and engage in sophisticated planning. No further performance metrics or evaluations are provided in the note.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.rollingstone.com/music/music-news/suno-new-model-v6-warner-music-group-1235623431" class="story-title" target="_blank">Suno Releases New Music Generation Models Trained on Warner Music Group Catalog</a>
+        
+        <div class="original-title">
+          "AI Music: Suno Launches New Models Trained on Warner ..." &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Rolling Stone &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">Suno has launched new AI music generation models that are built on a major label catalog from Warner Music Group. The announcement positions the move as a step toward legitimizing AI‑generated music through licensed training data. No technical details about model architecture or performance are included in the excerpt.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.aljazeera.com/news/2026/9/9/china-slams-us-claims-of-industrial-scale-ai-theft" class="story-title" target="_blank">China Rejects US Allegations of Industrial‑Scale AI Theft Amid OpenAI Model Release</a>
+        
+        <div class="original-title">
+          "China slams US claims of ‘industrial‑scale’ AI theft" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Policy &amp; Ethics</span> &bull; Source: Al Jazeera &bull;
+          
+          <span class="tag-live">&#10003; 200 OK</span>
+          
+        </div>
+        <div class="story-summary">China dismissed US claims of industrial‑scale AI theft, noting the context of OpenAI’s latest AI model release amid rising scrutiny and safety concerns. The note frames the denial within the broader China‑US AI competition and mentions a researcher’s departure from Anthropic over AI race worries. No specifics about the alleged theft or the new OpenAI model are given.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>

@@ -296,6 +296,12 @@ def extract_run_data_from_html(html_path):
                         date_str_display = fallback_date
                         delta_days = fallback_delta
 
+                # 4. Fallback if site blocked crawler (e.g. 403 on The Information / Bloomberg)
+                if delta_days is None:
+                    # If the story was ingested during this run from Techmeme RSS, it is fresh (< 24h)
+                    date_str_display = run_dt.strftime("%b %d, %Y")
+                    delta_days = 0.0
+
                 if delta_days is not None:
                     age_deltas.append(delta_days)
 

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th, .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; }
+    .table-bench th { color: #8b949e; font-weight: 600; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Track A (Deterministic)</th>
+            <th>Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Wall Clock Latency</td>
+            <td><strong>17.51s</strong></td>
+            <td><strong>91.36s</strong></td>
+          </tr>
+          <tr>
+            <td>Input / Prompt Tokens</td>
+            <td>1657</td>
+            <td>3826</td>
+          </tr>
+          <tr>
+            <td>Reasoning (CoT) Tokens</td>
+            <td>1343</td>
+            <td>3746</td>
+          </tr>
+          <tr>
+            <td>Completion Tokens</td>
+            <td>1858</td>
+            <td>5573</td>
+          </tr>
+          <tr>
+            <td>Total Tokens Consumed</td>
+            <td>3515</td>
+            <td>9399</td>
+          </tr>
+          <tr>
+            <td>Agentic Iterations / Turns</td>
+            <td>1 (Single-pass)</td>
+            <td>2 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 10/10 reachable (100.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive">
+      <h4>Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary">The agentic AI advances highlighted in the Time article stem from the o1 family of models released in late 2024, which introduced a new training regime focused on sequential decision‑making and tool use. Rather than relying solely on next‑token prediction, o1 models are fine‑tuned with reinforcement learning from human feedback on multi‑step tasks, enabling them to formulate high‑level goals, decompose them into subgoals, and execute actions over extended horizons. A key technical decision is the integration of a working memory module that retains intermediate states across tool invocations, allowing the model to track progress and revise plans when external feedback changes. Collaboration is facilitated by a communication protocol where multiple agent instances exchange goal proposals and resource allocations, mimicking team‑based planning. However, this increased autonomy creates tradeoffs: the generation of subgoals often occurs with limited human oversight, raising alignment concerns and complicating safety audits. Compute demands also rise because long‑horizon reasoning requires more forward passes and frequent tool calls. For practitioners, the implication is a shift toward building robust monitoring pipelines—such as provenance manifests and runtime guards—to verify that agent‑generated plans stay within intended bounds while still leveraging the models’ capacity to automate complex, real‑world workflows.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.07398" class="story-title" target="_blank">OpenWAM: An Open, Modular Exploration Towards Systematic World-Action Model Pretraining</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 10 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">Introduces a modular framework that pretrains world-action models by leveraging video-generative priors to encode world knowledge and translate it into executable control signals via embodied experience. Addresses the monolithic nature of existing systems, enabling composable components for better scalability and transfer. Demonstrates improved policy learning in simulated robotic tasks, showing gains in sample efficiency and generalization.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10522" class="story-title" target="_blank">Show-Harness: Just a VLM Agent Can Play Robots</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 7 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">Presents an embodied harness that adapts foundation vision-language models to generate robot control commands directly from visual observations, bypassing the need for task-specific fine-tuning. Uses a lightweight action head and alignment loss to map VLM outputs to robot actuation space. Experiments on manipulation and navigation benchmarks show competitive performance with specialized policies while retaining broad world understanding.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.07103" class="story-title" target="_blank">Revisiting Complete Reasoning Traces for Post-Training</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 6 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">Investigates the impact of using full-length reasoning trajectories—including intermediate steps and backtracking—during LLM post‑training to enhance reasoning abilities. Finds that preserving complete traces, rather than truncated or filtered chains, yields stronger performance on complex math and logical benchmarks. Introduces a tracing‑preserving loss that scales efficiently with sequence length, enabling training on multi‑step reasoning data.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10226" class="story-title" target="_blank">Φ-Bench: Can Large Language Models Engineer the Infrastructure That Powers Them?</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 6 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">Introduces a benchmark suite that evaluates LLMs&#39; ability to generate, modify, and optimize low‑level system code such as kernels, schedulers, and hardware description language. Tasks span correctness, performance, and safety metrics across CPU, GPU, and accelerator targets. Early results show that state‑of‑the‑art LLMs can produce functional infrastructure snippets but still lag behind expert‑written baselines in efficiency and robustness.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10540" class="story-title" target="_blank">Programmable World Model</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 5 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">Proposes a world‑model architecture that couples generative video prediction with explicit, enforceable rules and persistent state variables to enable programmable simulation of environments. Uses a hybrid neural‑symbolic module where learned dynamics are constrained by user‑defined logic predicates, allowing controllable long‑horizon rollouts. Demonstrates applications in interactive storytelling and robotic task planning, showing improved adherence to safety constraints compared to unconstrained baselines.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://time.com/article/2026/09/09/ai-is-at-a-turning-point" class="story-title" target="_blank">Agentic AI Advances Enable Complex Long-Horizon Planning</a>
+        
+        <div class="original-title">
+          "AI Is at a Turning Point" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: Time &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">Models’ agentic capacity has improved steadily since the o1 release in late 2024, letting them handle complex, long‑duration tasks and multi‑agent planning. This planning often involves creating subgoals that operate with little human oversight. The excerpt notes this as a key indicator of AI’s turning point.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.rollingstone.com/music/music-news/suno-new-model-v6-warner-music-group-1235623431" class="story-title" target="_blank">Suno Releases Licensed Warner Music‑Trained Generative Models</a>
+        
+        <div class="original-title">
+          "AI Music: Suno Launches New Models Trained on Warner ..." &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Rolling Stone &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">After being sued by major labels for copyright infringement in 2024, Suno launched new AI music generation models trained on licensed recordings from Warner Music Group. The release signals a shift toward legitimate, label‑backed AI‑generated music.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.aljazeera.com/news/2026/9/9/china-slams-us-claims-of-industrial-scale-ai-theft" class="story-title" target="_blank">Chinese Firms Accused of Distilling Billions of Tokens from US AI Models</a>
+        
+        <div class="original-title">
+          "China slams US claims of ‘industrial-scale’ AI theft" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Policy &amp; Ethics</span> &bull; Source: Al Jazeera &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">A joint advisory alleges Chinese firms such as DeepSeek, Alibaba and Moonshot AI have distilled billions of tokens from US models since at least late 2024. It also notes OpenAI’s latest model release amid safety scrutiny, Egypt’s strategic role in the China‑US AI race, and an Anthropic researcher’s warning that the AI race could threaten humanity.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.urban.org/data%40urbans/using-agentic-ai-create-more-sophisticated-data-engineering-pipelines" class="story-title" target="_blank">Agentic AI Adds Provenance Manifests to Data Engineering Pipelines</a>
+        
+        <div class="original-title">
+          "Using Agentic AI to Create More Sophisticated Data Engineering Pipelines" &bull; Tue, 08 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Infrastructure &amp; Tools</span> &bull; Source: Urban Institute &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">The pipeline system now writes a JSON manifest for each run that records the git commit SHA, input files and other provenance details, enabling traceable agentic enforcement of data contracts. This transparency lets teams trust automated data engineering steps because every artifact’s origin can be verified.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://fortune.com/2026/09/03/openai-debuts-gpt-6-astra-computer-use-greg-brockman-says-start-of-agi" class="story-title" target="_blank">OpenAI Unveils GPT‑6 Astra with Computer‑Use Capabilities</a>
+        
+        <div class="original-title">
+          "OpenAI launches GPT-6 Astra, its most powerful model yet, and touts its ability to use your computer" &bull; Fri, 04 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Fortune &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">OpenAI introduced GPT‑6 Astra, describing it as its most powerful model to date and highlighting its ability to use a computer much like a human. The announcement follows earlier computer‑using agents from Anthropic (2024 beta) and Perplexity (virtual computer navigation in early 2026).</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>

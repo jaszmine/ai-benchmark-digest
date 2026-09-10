@@ -21,6 +21,7 @@ class StoryItem(BaseModel):
     summary: str = Field(..., description="High-signal technical summary (2-3 sentences)")
     source: str = Field(..., description="Publisher or origin")
     published_at: Optional[datetime] = Field(default=None, description="Publication timestamp")
+    upvotes: int | None = None
 
     @field_validator("category", mode="before")
     @classmethod

@@ -103,13 +103,29 @@
       <div class="story-item">
         <a href="{{ story.url }}" class="story-title" target="_blank">{{ story.title }}</a>
         <div class="story-meta">
-          <span class="badge">{{ story.category.value }}</span> &bull; Source: {{ story.source }} &bull;
-          {% if links[story.url].is_protected %}
-          <span class="tag-protected">&#9888; Protected ({{ links[story.url].status }})</span>
-          {% elif links[story.url].healthy %}
-          <span class="tag-live">&#10003; 200 OK</span>
+          <span class="badge">{{ story.category.value if story.category.value is defined else story.category }}</span> &bull;
+          Source: {{ story.source }}
+          {% if ("ArXiv" in story.source or "arxiv" in story.url) and story.upvotes %}
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; {{ story.upvotes }} upvotes</span>
+          {% endif %}
+          &bull;
+          {% set link_info = links.get(story.url, {}) %}
+          {% if link_info is mapping %}
+            {% if link_info.is_protected %}
+              <span class="tag-protected">&#9888; Protected ({{ link_info.status }})</span>
+            {% elif link_info.healthy %}
+              <span class="tag-live">&#10003; 200 OK</span>
+            {% else %}
+              <span class="tag-dead">&#10007; Status {{ link_info.status }}</span>
+            {% endif %}
           {% else %}
-          <span class="tag-dead">&#10007; Status {{ links[story.url].status }}</span>
+            {% if link_info in [401, 403] %}
+              <span class="tag-protected">&#9888; Protected ({{ link_info }})</span>
+            {% elif link_info == 200 %}
+              <span class="tag-live">&#10003; 200 OK</span>
+            {% else %}
+              <span class="tag-dead">&#10007; Status {{ link_info }}</span>
+            {% endif %}
           {% endif %}
         </div>
         <div class="story-summary">{{ story.summary }}</div>
@@ -131,13 +147,24 @@
         </div>
         {% endif %}
         <div class="story-meta">
-          <span class="badge">{{ story.category.value }}</span> &bull; Source: {{ story.source }} &bull;
-          {% if links[story.url].is_protected %}
-          <span class="tag-protected">&#9888; Protected ({{ links[story.url].status }})</span>
-          {% elif links[story.url].healthy %}
-          <span class="tag-live">&#10003; 200 OK</span>
+          <span class="badge">{{ story.category.value if story.category.value is defined else story.category }}</span> &bull; Source: {{ story.source }} &bull;
+          {% set link_info = links.get(story.url, {}) %}
+          {% if link_info is mapping %}
+            {% if link_info.is_protected %}
+              <span class="tag-protected">&#9888; Protected ({{ link_info.status }})</span>
+            {% elif link_info.healthy %}
+              <span class="tag-live">&#10003; 200 OK</span>
+            {% else %}
+              <span class="tag-dead">&#10007; Status {{ link_info.status }}</span>
+            {% endif %}
           {% else %}
-          <span class="tag-dead">&#10007; Status {{ links[story.url].status }}</span>
+            {% if link_info in [401, 403] %}
+              <span class="tag-protected">&#9888; Protected ({{ link_info }})</span>
+            {% elif link_info == 200 %}
+              <span class="tag-live">&#10003; 200 OK</span>
+            {% else %}
+              <span class="tag-dead">&#10007; Status {{ link_info }}</span>
+            {% endif %}
           {% endif %}
         </div>
         <div class="story-summary">{{ story.summary }}</div>
