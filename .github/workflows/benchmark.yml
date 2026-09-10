@@ -6,6 +6,10 @@ on:
     - cron: '0 13 * * 1,4'
   workflow_dispatch:
 
+# Grant runner write permissions so it can push artifacts back to main
+permissions:
+  contents: write
+
 jobs:
   run-benchmark:
     runs-on: ubuntu-latest
@@ -14,17 +18,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@v5
         with:
+          version: "latest"
           enable-cache: true
 
-      - name: Set up Python
+      - name: Set up Python 3.11
         run: uv python install 3.11
 
       - name: Install Dependencies
-        run: |
-          uv venv
-          uv pip install -e .
+        run: uv sync --frozen
 
       - name: Execute Benchmark Pipeline
         env:
@@ -40,7 +43,23 @@ jobs:
           LOOKBACK_DAYS: 7
           MAX_TRACK_B_TURNS: 3
           INTER_TURN_SLEEP_SECONDS: 3.0
-          INTER_TRACK_PAUSE_SECONDS: 15.0
+          INTER_TRACK_PAUSE_SECONDS: 20.0
         run: |
-          source .venv/bin/activate
-          python -c "import asyncio; from src.main import orchestrate_benchmark; asyncio.run(orchestrate_benchmark(send_email=True))"
+          uv run python -c "import asyncio; from src.main import orchestrate_benchmark; asyncio.run(orchestrate_benchmark(send_email=True))"
+
+      - name: Commit and Persist Artifacts Permanently
+        if: always()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Stage and commit all generated snapshots, JSON telemetry, and dashboard.html
+          git add artifacts/
+          
+          # Only commit if new artifact files exist
+          if git diff --staged --quiet; then
+            echo "No new artifacts to commit."
+          else
+            git commit -m "chore(telemetry): record benchmark run artifacts [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
