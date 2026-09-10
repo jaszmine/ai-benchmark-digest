@@ -2,9 +2,9 @@ name: AI Benchmark Telemetry Pipeline
 
 on:
   schedule:
-    # Runs at 8:00 AM Central Time every day (handles CDT/CST automatically)
-    # setting to 10:20am for test run 16
-    - cron: '0 11 * * *'
+    # Runs at 8:23 AM Central Time every day (handles CDT/CST automatically)
+    # set at 8:23 to avoid top of the hour and high-volume intervals in the gh scheduler queue
+    - cron: '23 8 * * *'
       timezone: 'America/Chicago'
   workflow_dispatch:
 
