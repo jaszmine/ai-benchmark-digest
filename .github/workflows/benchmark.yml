@@ -4,7 +4,7 @@ on:
   schedule:
     # Runs at 8:00 AM Central Time every day (handles CDT/CST automatically)
     # setting to 10:20am for test run 16
-    - cron: '20 10 * * *'
+    - cron: '30 10 * * *'
       timezone: 'America/Chicago'
   workflow_dispatch:
 
