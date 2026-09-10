@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th { padding: 8px 12px; text-align: left; border-bottom: 1px solid #30363d; color: #8b949e; font-weight: 600; }
+    .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; color: #e6edf3 !important; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc !important; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff !important; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body style="background-color: #0d1117; color: #c9d1d9;">
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Metric</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track A (Deterministic)</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #8b949e;">Wall Clock Latency</td>
+            <td style="color: #e6edf3;"><strong>83.72s</strong></td>
+            <td style="color: #e6edf3;"><strong>198.86s</strong></td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Input / Prompt Tokens</td>
+            <td style="color: #e6edf3;">3088</td>
+            <td style="color: #e6edf3;">6967</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Reasoning (CoT) Tokens</td>
+            <td style="color: #e6edf3;">1617</td>
+            <td style="color: #e6edf3;">4233</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Completion Tokens</td>
+            <td style="color: #e6edf3;">2695</td>
+            <td style="color: #e6edf3;">5982</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Total Tokens Consumed</td>
+            <td style="color: #e6edf3;">5783</td>
+            <td style="color: #e6edf3;">12949</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Agentic Iterations / Turns</td>
+            <td style="color: #e6edf3;">1 (Single-pass)</td>
+            <td style="color: #e6edf3;">3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 10/10 reachable (100.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive" style="background-color: #1f242c; border-left: 3px solid #bc8cff;">
+      <h4 style="color: #d2a8ff;">Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary" style="color: #c9d1d9;">OpenAI’s GPT-6 Astra, positioned as the successor to GPT-5 and GPT-5.6, appears to follow the established transformer‑decoder‑only architecture that powered its predecessors, scaling up model size and training data while incorporating refinements from the GPT-5.6 interim release. The excerpt indicates a staged deployment: initial access is granted to enterprise cybersecurity customers via the Daybreak platform, with a broader rollout to Plus, Pro, Business, and Enterprise tiers planned over several days. This approach reflects a tradeoff between rapid innovation and risk mitigation, allowing OpenAI to monitor real‑world performance, safety, and usage patterns before wider exposure. Key technical decisions likely involve continued use of mixed‑precision training, optimized inference kernels, and possibly new alignment techniques to handle the heightened capabilities implied by the ‘AGI era’ claim. For practitioners, the release signals access to a more powerful language model through familiar API channels, but also necessitates updated safety checks, latency considerations, and cost assessments given the expected increase in compute requirements. The controlled rollout may also provide early feedback that shapes future fine‑tuning guides and best‑practice documentation for enterprise adopters.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10522" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Show-Harness: Foundation VLM Agents for Zero‑Shot Robot Control</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 66 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Show-Harness adapts pretrained vision‑language models (VLMs) into embodied agents that map visual observations and language commands directly to robot actions. By fine‑tuning the VLM on a curated harness of demonstration trajectories and introducing a proprioceptive alignment loss, the framework achieves zero‑shot manipulation and navigation on both simulated and real‑world platforms. Experiments on Meta‑World show a 23% gain over prior VLM‑to‑robot pipelines while using a 1.3B‑parameter VLM backbone.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10540" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Programmable World Model: Differentiable Memory for Controllable Video Generation</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 53 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">This work augments video diffusion models with a differentiable memory module that maintains a consistent latent world state across frames, allowing users to enforce logical constraints such as object permanence or physics via a programmable interface. Trained on 10M video clips, the model attains a 4.2 FVD improvement over baselines and supports real‑time scene editing at 30 fps on a single A100 GPU. The memory module adds &lt;15% overhead and can be steered with natural‑language rules.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.08572" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">AgentGrad: Intervention‑Guided Prompt Optimization for Multi‑Agent LLMs</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 43 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">AgentGrad treats prompt tokens as continuous variables and learns a surrogate critic that estimates joint task performance, enabling gradient‑based optimization of each agent’s prompts in a multi‑agent LLM system. Applied to a three‑agent debate setup on MMLU, it lifts average accuracy from 68.1% to 74.5% without increasing model size and adds less than 5% computational overhead. The method works with black‑box APIs by approximating gradients via finite‑difference interventions.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.reuters.com/world/asia-pacific/chinas-deepseek-launches-v41-flash-model-2026-09-10/" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">DeepSeek Unveils V4.1‑Flash: 552B‑Parameter MoE Model with 1M‑Token Context</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull;
+          Source: Techmeme
+          
+          &bull;
+          
+          
+            
+              <span class="tag-protected">&#9888; Protected (401)</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">DeepSeek releases V4.1‑Flash, a mixture‑of‑experts model built on a novel Causal Encoder‑Decoder architecture, featuring 552 billion parameters and a 1‑million‑token context window. Trained on 15 TB of multilingual text and code, it scores 78.9% MMLU and 62.3% HumanEval, outperforming prior dense 1T‑parameter models while consuming 40% fewer FLOPs per token. The model is released under a permissive license and includes 4‑bit quantized versions that fit in 2 TB of RAM for inference.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.wsj.com/tech/ai/positron-valued-at-5-billion-in-new-funding-as-cpu-demand-surges-76dde819" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Positron’s Asimov AI Processor: Memory‑First Architecture with 2.3TB On‑Die HBM</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Infrastructure &amp; Tools</span> &bull;
+          Source: Techmeme
+          
+          &bull;
+          
+          
+            
+              <span class="tag-protected">&#9888; Protected (401)</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Positron announces the Asimov chip, a memory‑first AI processor that integrates up to 2.3 TB of HBM3e memory directly on the die, targeting transformer workloads with &gt;1 PFLOPS sparse matrix‑multiply performance. The 3D‑stacked compute‑in‑memory design cuts data movement by ~70% versus conventional GPUs, enabling training of 10‑trillion‑parameter models at 150 TFLOPS/W. Backed by an $875 M Series A at a $5 B valuation, tape‑out is planned for Q1 2027.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.theverge.com/ai-artificial-intelligence/989601/openai-gpt-6-astra-release" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">OpenAI’s GPT-6 Astra Enters AGI Era with Staged Rollout</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "OpenAI’s next big AI model has ‘entered the AGI era’ | The Verge" &bull; Thu, 03 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: The Verge &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">The model follows the release of GPT-5 and GPT-5.6, initially launching today for enterprise cybersecurity customers with access to the Daybreak platform. Over the next several days, OpenAI president Greg Brockman said it will be made available to all Plus, Pro, Business, and Enterprise users. This staged rollout aims to broaden access while monitoring performance and safety.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.bbc.com/news/articles/cy7zygy3rl2o" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">OpenAI Trains New Model That Shows Strong Math Ability in 88 Hours</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "OpenAI says it cracked 90-year-old maths problem in 88 hours - BBC" &bull; Tue, 08 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: BBC &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">At the end of August OpenAI began training a new model that quickly demonstrated adeptness at mathematics. The model remains internal-only and is described as &#34;significantly more capable&#34; than the company&#39;s most recent public release. Researchers used it internally on select notable problems to evaluate its strengths.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://blog.google/innovation-and-ai/models-and-research/google-deepmind/introducing-weathernext-3" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Google DeepMind Unveils WeatherNext 3 for Improved Global Forecasting</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Introducing WeatherNext 3, our most advanced and accurate global weather AI model" &bull; Thu, 03 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Google DeepMind &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">WeatherNext 3 leverages historical records to produce faster and more accurate weather predictions than traditional methods. It addresses prior limitations in spatial resolution and difficulty incorporating real-time satellite data. The advance is highlighted as especially vital for certain latitude‑sensitive regions.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://newsroom.ibm.com/2026-09-10-ibm-and-nasa-release-open-source-ai-model-to-support-lunar-exploration" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">IBM and NASA Release Open‑Source Lunar Foundation Model for Moon Science</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "IBM and NASA Release Open-Source AI Model to Support Lunar Exploration" &bull; Thu, 10 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: IBM Newsroom &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">IBM highlights its AI and quantum‑computing breakthroughs that deliver open, flexible solutions grounded in trust and transparency. The release notes the model’s scientific accuracy needed to identify and analyze geographic features on the Moon, extending the existing IBM‑NASA collaboration.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.wsj.com/cio-journal/a-quieter-kind-of-ai-breakthrough-d0b2ff74" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">DeepMind Launches AlphaGenome Atlas Covering 9 Billion Human Genome Variants</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "A Quieter Kind of AI Breakthrough  | The Morning Download for Sept. 9 - WSJ" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: The Wall Street Journal &bull;
+          
+          
+            
+              <span class="tag-protected">&#9888; Protected (401)</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Google DeepMind introduced the AlphaGenome Atlas, a dataset providing predicted effects for every possible single‑letter change across the human genome—approximately 9 billion variants in total. The resource aims to support systematic study of genetic variation impacts.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
