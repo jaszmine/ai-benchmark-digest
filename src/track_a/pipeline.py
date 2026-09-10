@@ -67,22 +67,26 @@ async def run_track_a() -> tuple[TrackOutput, dict]:
     raw = await ingest_all()
     ranked = filter_and_rank(raw, lookback_days=settings.lookback_days)
 
-    # 1. Balanced source sampling
-    arxiv_candidates = [c for c in ranked if "ArXiv" in c.source][:4]
-    hn_candidates = [c for c in ranked if "Hacker News" in c.source][:4]
-    techmeme_candidates = [c for c in ranked if "Techmeme" in c.source][:4]
+    # # 1. Balanced source sampling
+    # arxiv_candidates = [c for c in ranked if "ArXiv" in c.source][:4]
+    # hn_candidates = [c for c in ranked if "Hacker News" in c.source][:4]
+    # techmeme_candidates = [c for c in ranked if "Techmeme" in c.source][:4]
 
-    top_candidates = arxiv_candidates + hn_candidates + techmeme_candidates
+    # top_candidates = arxiv_candidates + hn_candidates + techmeme_candidates
 
-    # 2. Pad to guarantee 10-12 diverse candidates reach prompt
-    if len(top_candidates) < 10:
-        seen = {c.url for c in top_candidates}
-        for c in ranked:
-            if c.url not in seen:
-                top_candidates.append(c)
-                seen.add(c.url)
-            if len(top_candidates) >= 12:
-                break
+    # # 2. Pad to guarantee 10-12 diverse candidates reach prompt
+    # if len(top_candidates) < 10:
+    #     seen = {c.url for c in top_candidates}
+    #     for c in ranked:
+    #         if c.url not in seen:
+    #             top_candidates.append(c)
+    #             seen.add(c.url)
+    #         if len(top_candidates) >= 12:
+    #             break
+
+    # Pure deterministic ranking: take the absolute top candidates by composite score
+    CANDIDATE_POOL_SIZE = 20  # Increased from 12 (16-20 is ideal)
+    top_candidates = ranked[:CANDIDATE_POOL_SIZE]
 
     # Build an upvote lookup map keyed by canonical URL and ArXiv ID
     upvote_map: dict[str, int] = {}

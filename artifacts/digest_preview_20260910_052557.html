@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th, .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; }
+    .table-bench th { color: #8b949e; font-weight: 600; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Track A (Deterministic)</th>
+            <th>Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Wall Clock Latency</td>
+            <td><strong>33.42s</strong></td>
+            <td><strong>187.08s</strong></td>
+          </tr>
+          <tr>
+            <td>Input / Prompt Tokens</td>
+            <td>2934</td>
+            <td>7418</td>
+          </tr>
+          <tr>
+            <td>Reasoning (CoT) Tokens</td>
+            <td>2061</td>
+            <td>4386</td>
+          </tr>
+          <tr>
+            <td>Completion Tokens</td>
+            <td>2844</td>
+            <td>5546</td>
+          </tr>
+          <tr>
+            <td>Total Tokens Consumed</td>
+            <td>5778</td>
+            <td>12964</td>
+          </tr>
+          <tr>
+            <td>Agentic Iterations / Turns</td>
+            <td>1 (Single-pass)</td>
+            <td>3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 9/10 reachable (90.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive">
+      <h4>Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary">OpenAI’s GPT-6 Astra represents a notable shift in model design toward cybersecurity‑focused capabilities and operational efficiency. According to the company’s statements, Astra better follows user intent and crosses a critical frontier in cybersecurity skills, suggesting architectural changes that prioritize robust handling of adversarial inputs and secure code generation. The model is also described as faster and more efficient than its predecessor, implying optimizations in inference throughput—perhaps through refined sparsity, improved kernel fusion, or a revised attention mechanism that reduces compute per token. A separate report notes that Astra employs an &#34;opaque recurrence&#34; reasoning technique, which obscures the chain‑of‑thought process traditionally used for model monitoring and interpretability. This trade‑off enhances performance or security properties but limits external auditing of model decisions, raising concerns for safety‑critical applications. For practitioners, the release signals a need to adapt evaluation pipelines: traditional benchmarks may not capture Astra’s cybersecurity gains, and internal security teams must account for the model’s novel recurrence‑based reasoning when assessing risk. Moreover, the claimed efficiency gains could lower serving costs, yet the opacity introduced by opaque recurrence may necessitate new tooling for runtime monitoring and compliance, especially in regulated sectors where explainability is mandated.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10522" class="story-title" target="_blank">Show-Harness Enables VLM Agents to Control Robots via Vision-Language Reasoning</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 35 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">Show-Harness proposes a framework where a foundation vision-language model (VLM) acts as an embodied agent, translating high-level language instructions into robot actions through learned affordance mapping. The system integrates visual perception, language grounding, and policy execution without task-specific fine-tuning, demonstrating zero-shot manipulation and navigation in simulated and real-world setups. Experiments show improved success rates over prior RL-based methods, highlighting VLMs&#39; potential for general-purpose robotics.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10540" class="story-title" target="_blank">Programmable World Model Introduces Persistent State and Rule-Based Control in Video Generation</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 25 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">The Programmable World Model extends video world models by incorporating a mutable memory store that maintains consistent object states across frames and enforces user-defined physical or logical rules. A differentiable rule engine allows the model to simulate interventions, enabling controllable synthesis of complex scenes with long-range dependencies. Benchmarks on synthetic datasets show superior frame consistency and rule adherence compared to baseline video diffusion models.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://inference-docs.cerebras.ai/models/overview" class="story-title" target="_blank">Qwen 3.8 27B Model Deployed on Cerebras Wafer-Scale Engine Achieves 1500 Tokens per Second</a>
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull;
+          Source: Hacker News
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">Cerebras announces that the 27-billion-parameter Qwen 3.8 language model runs on its Wafer-Scale Engine (WSE-2) delivering sustained throughput of 1,500 tokens per second with low latency. The deployment leverages sparsity-aware kernels and mixed-precision FP8 to maximize utilization of the wafer-scale interconnect. This performance positions Qwen 3.8 among the fastest large-model inference solutions, enabling real-time applications at scale.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.wired.com/story/a-new-dollar400-million-startup-wants-to-fix-the-ai-memory-bottleneck/" class="story-title" target="_blank">Kepler Computing Emerges with $468M to Advance 3D-Stacked HBM and SRAM for AI Workloads</a>
+        <div class="story-meta">
+          <span class="badge">Infrastructure &amp; Tools</span> &bull;
+          Source: Techmeme
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">Kepler Computing has exited stealth with $468 million in funding to develop a novel 3D stacking technique and proprietary materials that increase high-bandwidth memory (HBM) and SRAM density without relying on EUV lithography. The technology aims to alleviate the memory bandwidth wall in AI accelerators by providing tighter integration of logic and memory layers. Early prototypes demonstrate up to 2× memory capacity and 1.8× bandwidth improvements over current HBM3 offerings.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://blog.google/innovation-and-ai/models-and-research/google-deepmind/alphagenome-atlas/" class="story-title" target="_blank">AlphaGenome Atlas Releases High-Resolution AI-Generated Map of Human DNA</a>
+        <div class="story-meta">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: Hacker News
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">DeepMind&#39;s AlphaGenome Atlas employs a transformer-based generative model to produce a base-pair resolution map of the human genome, integrating multi‑omics data and evolutionary constraints. The atlas predicts regulatory element activity, splice variants, and structural variant effects with accuracy surpassing existing reference panels. Researchers can query the model to simulate genetic perturbations, facilitating functional genomics and disease‑association studies.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.nbcnews.com/tech/tech-news/openai-debuts-gpt-6-astra-security-measures-rcna595940" class="story-title" target="_blank">OpenAI’s GPT-6 Astra Triggers Internal Security Measures While Advancing Cybersecurity and Efficiency</a>
+        
+        <div class="original-title">
+          "OpenAI debuts GPT-6 Astra, says it triggered security measures" &bull; Thu, 03 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: NBCNews &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">OpenAI released its new model GPT-6 Astra, which the company said triggered internal security measures. The model is claimed to better follow user intent, cross a critical frontier in cybersecurity capabilities, and be faster and more efficient than its predecessor on a variety of tasks.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.businesswire.com/news/home/20260908593295/en/Inception-Launches-Mercury-2.5-the-Next-Tier-of-Intelligence-for-Diffusion-LLMs" class="story-title" target="_blank">Inception Releases Mercury 2.5 Diffusion LLM Achieving Over 1,100 Tokens/Second</a>
+        
+        <div class="original-title">
+          "Inception Launches Mercury 2.5, the Next Tier of Intelligence for Diffusion LLMs" &bull; Tue, 08 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Business Wire &bull;
+          
+          
+            
+              <span class="tag-dead">&#10007; Status 0</span>
+            
+          
+        </div>
+        <div class="story-summary">Inception announced Mercury 2.5, described as the most capable diffusion large language model (dLLM) and the fastest reasoning LLM in production. The model delivers the next tier of intelligence for dLLMs and runs over 1,100 tokens per second in production.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://eu.36kr.com/en/p/3970014644295303" class="story-title" target="_blank">Chinese Open-Source LLMs Shift to Base-Model Exports, Enabling Global Localization</a>
+        
+        <div class="original-title">
+          "China&#39;s Open-Source AI Models Are Emerging as the Global &#34;Metric System&#34; for Artificial Intelligence" &bull; Sun, 06 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Infrastructure &amp; Tools</span> &bull; Source: 36Kr &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">Chinese overseas expansion of large language models now exports base models instead of just apps and APIs, allowing foreign developers to train, rename, and localize them as domestic AI. These open-source LLMs accommodate many languages and are approaching a unified global language.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.globaltimes.cn/page/202609/1369842.shtml" class="story-title" target="_blank">Saudi Firm Debuts LLM Built on Chinese MiniMax Model, Highlighting AI Infrastructure Role</a>
+        
+        <div class="original-title">
+          "Saudi firm launches LLM based on Chinese AI model" &bull; Sat, 05 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Global Times &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">A Saudi Arabian AI company unveiled a large language model based on one from Chinese AI firm MiniMax. Experts noted that Chinese AI models are emerging as foundational tech infrastructure for global developers to build next-generation AI models.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.prnewswire.com/news-releases/humain-unveils-humain-m3-a-frontier-arabic-language-model-developed-by-minimax-in-research-preview-on-humain-node-302869158.html" class="story-title" target="_blank">HUMAIN Unveils Frontier Arabic LLM humain‑m3 Developed by MiniMax</a>
+        
+        <div class="original-title">
+          "HUMAIN Unveils humain-m3, a Frontier Arabic Language Model Developed by MiniMax, in Research Preview on HUMAIN Node" &bull; Thu, 03 Sep
+        </div>
+        
+        <div class="story-meta">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: PR Newswire &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary">HUMAIN, a PIF-backed firm, introduced humain-m3, described as a frontier Arabic language model developed by MiniMax. The model is part of HUMAIN’s full-stack AI offerings, which include advanced data centers, cloud platforms, and transformative AI solutions.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>

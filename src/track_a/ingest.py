@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime, timezone
+import math
 import re
 import urllib.parse
 
@@ -46,7 +47,7 @@ async def fetch_techmeme(client: httpx.AsyncClient) -> list[RawCandidate]:
                         source="Techmeme",
                         published_at=pub_time,
                         raw_text=desc or entry.get("title", ""),
-                        score=50.0,
+                        score=35.0,  # Curated editorial baseline
                     )
                 )
     except Exception as e:
@@ -91,7 +92,7 @@ async def fetch_hf_daily_papers(client: httpx.AsyncClient) -> list[RawCandidate]
                             source="ArXiv (via Hugging Face)",
                             published_at=pub_time,
                             raw_text=annotated_summary,
-                            score=upvotes * 1.5,
+                            score=round(upvotes * 1.5, 1),
                         )
                     )
     except Exception as e:
@@ -103,11 +104,17 @@ async def fetch_hacker_news(client: httpx.AsyncClient) -> list[RawCandidate]:
     candidates = []
     lookback_secs = settings.lookback_days * 86400
     cutoff = int(datetime.now(timezone.utc).timestamp()) - lookback_secs
-    query = "AI OR LLM OR model OR architecture OR open-source"
-    url = (
-        f"https://hn.algolia.com/api/v1/search_by_date?"
-        f"query={urllib.parse.quote(query)}&tags=story&numericFilters=created_at_i>{cutoff},points>5&hitsPerPage=20"
-    )
+
+    terms = "LLM AI GPT model benchmark OpenAI Anthropic open-source"
+    params = {
+        "query": terms,
+        "optionalWords": terms,
+        "tags": "story",
+        "numericFilters": f"created_at_i>{cutoff},points>15",
+        "hitsPerPage": 30,
+    }
+    url = f"https://hn.algolia.com/api/v1/search?{urllib.parse.urlencode(params)}"
+
     try:
         resp = await client.get(url, timeout=settings.http_timeout_seconds)
         if resp.status_code == 200:
@@ -121,14 +128,20 @@ async def fetch_hacker_news(client: httpx.AsyncClient) -> list[RawCandidate]:
                     "created_at_i", int(datetime.now(timezone.utc).timestamp())
                 )
                 pub_time = datetime.fromtimestamp(created_ts, tz=timezone.utc)
+                points = float(hit.get("points", 0))
+
+                # Option B: Logarithmic scaling
+                # 16 pts -> 20.0 | 64 pts -> 30.0 | 256 pts -> 40.0 | 512 pts -> 45.0
+                scaled_score = round(math.log2(max(points, 2.0)) * 5.0, 1)
+
                 candidates.append(
                     RawCandidate(
                         title=hit.get("title", ""),
                         url=story_url,
                         source="Hacker News",
                         published_at=pub_time,
-                        raw_text=hit.get("title", ""),
-                        score=float(hit.get("points", 0)),
+                        raw_text=f"{hit.get('title', '')} (HN Points: {int(points)})",
+                        score=scaled_score,
                     )
                 )
     except Exception as e:
