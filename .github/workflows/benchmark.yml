@@ -2,11 +2,13 @@ name: AI Benchmark Telemetry Pipeline
 
 on:
   schedule:
-    # Runs at 13:00 UTC (8:00 AM CDT) every Monday and Thursday
-    - cron: '0 13 * * 1,4'
+    # Runs at 8:00 AM Central Time every day (handles CDT/CST automatically)
+    # setting to 10:20am for test run 16
+    - cron: '20 10 * * *'
+      timezone: 'America/Chicago'
   workflow_dispatch:
 
-# Grant runner write permissions so it can push artifacts back to main
+# grant runner write permissions so it can push artifacts back to main
 permissions:
   contents: write
 
@@ -14,6 +16,11 @@ jobs:
   run-benchmark:
     runs-on: ubuntu-latest
     steps:
+      - name: Log Timestamp
+        run: |
+          echo "Run started at: $(date)"
+          echo "Target schedule: 8:00 AM America/Chicago"
+
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -52,11 +59,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Stage and commit all generated snapshots, JSON telemetry, and dashboard.html
           git add artifacts/
-          
-          # Only commit if new artifact files exist
           if git diff --staged --quiet; then
             echo "No new artifacts to commit."
           else
