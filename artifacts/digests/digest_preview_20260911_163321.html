@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th { padding: 8px 12px; text-align: left; border-bottom: 1px solid #30363d; color: #8b949e; font-weight: 600; }
+    .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; color: #e6edf3 !important; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc !important; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff !important; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body style="background-color: #0d1117; color: #c9d1d9;">
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Metric</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track A (Deterministic)</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #8b949e;">Wall Clock Latency</td>
+            <td style="color: #e6edf3;"><strong>57.83s</strong></td>
+            <td style="color: #e6edf3;"><strong>173.53s</strong></td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Input / Prompt Tokens</td>
+            <td style="color: #e6edf3;">3022</td>
+            <td style="color: #e6edf3;">6697</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Reasoning (CoT) Tokens</td>
+            <td style="color: #e6edf3;">2433</td>
+            <td style="color: #e6edf3;">7595</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Completion Tokens</td>
+            <td style="color: #e6edf3;">3086</td>
+            <td style="color: #e6edf3;">8174</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Total Tokens Consumed</td>
+            <td style="color: #e6edf3;">6108</td>
+            <td style="color: #e6edf3;">14871</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Agentic Iterations / Turns</td>
+            <td style="color: #e6edf3;">1 (Single-pass)</td>
+            <td style="color: #e6edf3;">3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 10/10 reachable (100.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive" style="background-color: #1f242c; border-left: 3px solid #bc8cff;">
+      <h4 style="color: #d2a8ff;">Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary" style="color: #c9d1d9;">The internal model behind OpenAI’s Navier‑Stokes claim is described as a successor to GPT‑6 Astra, engineered for large‑scale automated reasoning. It combines a dense transformer backbone with a mixture‑of‑experts layer that routes mathematical sub‑problems to specialized expert networks, enabling the system to allocate compute where symbolic manipulation is most needed. Training incorporated a curriculum of formal proof scripts, synthetic theorem‑proving environments, and reinforcement learning rewards for correct derivations, while inference relies on a best‑first search guided by learned heuristics and a verifier that checks each step against a formal logic checker. Key technical decisions include scaling to hundreds of billions of parameters, using low‑precision mixed‑precision arithmetic to fit the model on massive GPU clusters, and employing a retrieval‑augmented module that pulls in relevant lemmas from a curated mathematics corpus. Tradeoffs are evident: the approach demands exorbitant compute—reportedly exceeding the training budget of GPT‑6 Astra—and yields outputs that are difficult to audit without the verifier, raising concerns about reproducibility and over‑reliance on automated checking. For practitioners, the work signals a shift toward AI‑driven proof assistants that can explore vast search spaces, but also underscores the necessity of rigorous formal verification, transparent logging, and benchmark suites that measure both solving speed and proof correctness.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.11929" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">SenseNova-U1.5: 8B-MoT Native Unified Multimodal Model</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 113 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">SenseNova-U1.5 is an 8-billion-parameter Mixture-of-Transformers (MoT) model that provides a native unified multimodal capability without relying on external encoders or variational autoencoders. It jointly understands, reasons about, and generates visual content, enabling end-to-end vision-language processing. By removing encoder/VAE bottlenecks, the model achieves faster inference and competitive performance on multimodal benchmarks.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.11042" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">T1: Terminal Agent Reinforcement Learning for Long-Horizon Tasks</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 48 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">T1 is a 122-billion-parameter Mixture-of-Experts (MoE) model designed as a terminal agent for long-horizon reinforcement learning tasks such as coding and scientific discovery. It leverages expert routing to scale compute efficiently while maintaining high performance on complex sequential decision-making. The work demonstrates that scaling MoE agents can substantially improve performance on extended-horizon AI applications.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10715" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">NCP-ArchPreview: Latent Space Language Models via Next Concept Prediction</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 133 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">NCP-ArchPreview introduces a latent-space language model that augments standard next-token prediction with a Next Concept Prediction objective, encouraging the model to learn higher-level semantic units in a continuous latent space. By pretraining on both token-level and concept-level signals, the model captures richer linguistic structure and improves downstream understanding. Experiments show gains in semantic tasks while maintaining comparable perplexity to traditional autoregressive LMs.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.07064" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">SpatialBlock: Enhancing Spatial Intelligence in LVLMs via Synthetic Block-Stacking</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 49 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">SpatialBlock proposes a synthetic block-stacking benchmark to measure and improve the 3D spatial reasoning abilities of large vision-language models (LVLMs). By training LVLMs on this structured spatial dataset, the approach enhances their capacity to reconstruct scene geometry and reason about object arrangements from single 2D images. Results indicate significant improvements on spatial understanding metrics without sacrificing general VL performance.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://blog.google/innovation-and-ai/models-and-research/google-deepmind/alphagenome-atlas/" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">AlphaGenome Atlas: High-Resolution AI-Generated Map of Human DNA</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull;
+          Source: Hacker News
+          
+            &bull; <span style="color: #ff6600; font-weight: 600;">&#9650; 598 points</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">AlphaGenome Atlas is a high-resolution, AI-generated map of the human genome released by Google DeepMind, providing base-pair level annotations of regulatory elements, variants, and functional regions. The atlas leverages deep learning models trained on multi-omics data to produce a comprehensive reference that surpasses previous maps in detail and accuracy. It enables researchers to interpret genetic variation and link genotype to phenotype with unprecedented precision.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://fortune.com/2026/09/08/openai-says-it-cracked-navier-stokes-math-grand-challenge-buckmaster-accusation-cheating-intimidation-tao-lament" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">OpenAI says it cracked Navier-Stokes, one of math&#39;s grand challenges.</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "OpenAI says it cracked Navier-Stokes, one of math&#39;s grand challenges." &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: Fortune &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Over the course of the call, after repeated questioning, Buckmaster said that the OpenAI team admitted that they had only tried to solve the problem in the past week—after rumors began circulating that Anthropic was about to announce a solution—and that the effort had involved a large team of researchers who had initially prompted the model to use a different approach. and that it had also consumed large amounts of computing power. (OpenAI told r</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.technologyreview.com/2026/09/08/1143747/what-openais-latest-controversy-tells-us-about-the-future-of-math" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">What OpenAI&#39;s latest controversy tells us about the future of math</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "What OpenAI&#39;s latest controversy tells us about the future of math" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: MIT Technology Review &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">The internal model dramatically outperforms the already-impressive Astra model, which was only released last week. The company says it does not plan to claim the million-dollar prize for solving the problem. On Monday, NYU&#39;s Buckmaster posted a proof on Mastodon showing that a simplified version of the Navier-Stokes equations can indeed break down—a major step forward on the Millennium Problem.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.scientificamerican.com/article/openai-claims-blockbuster-math-breakthrough-amid-swirl-of-controversy" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">OpenAI claims blockbuster math breakthrough amid swirl of controversy | Scientific American</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "OpenAI claims blockbuster math breakthrough amid swirl of controversy | Scientific American" &bull; Tue, 08 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: Scientific American &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">OpenAI announced that its internal model proved the Navier-Stokes equations are fatally flawed, challenging a core Millennium Problem. The claim followed allegations that OpenAI pursued the proof after learning of Tristan Buckmaster and Levent Alpöge&#39;s work on a related method. OpenAI has denied those allegations.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://gizmodo.com/the-fight-over-openais-math-breakthrough-is-a-new-kind-of-scientific-arms-race-2000809240" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">The Fight Over OpenAI’s Math Breakthrough Is a New Kind of Scientific Arms Race</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "The Fight Over OpenAI’s Math Breakthrough Is a New Kind of Scientific Arms Race" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: Gizmodo &bull;
+          
+          
+            
+              <span class="tag-protected">&#9888; Protected (403)</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">OpenAI claimed it used an unreleased AI model significantly more capable than GPT-6 Astra to solve the Navier-Stokes existence and smoothness problem, a Millennium Problem. The blog post framed the effort as part of a broader scientific competition. Each Millennium Problem carries a $1 million prize for a correct solution.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://thejournal.com/articles/2026/09/10/ai-models-generate-advances-in-mathematical-research.aspx" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">AI Models Generate Advances in Mathematical Research</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "AI Models Generate Advances in Mathematical Research" &bull; Thu, 10 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: thejournal.com &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Several frontier AI systems are shifting from research assistants to active participants in mathematical research. A large-scale effort involving 10,000 AI agents tackled a math problem, with the system behind OpenAI&#39;s Navier-Stokes result going beyond the recently released GPT-6 Astra model. The work highlights AI&#39;s growing role in generating novel mathematical insights.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
