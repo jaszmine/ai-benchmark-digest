@@ -2,17 +2,30 @@ name: AI Benchmark Telemetry Pipeline
 
 on:
   schedule:
-    # Runs at 8:23 AM Central Time every day (handles CDT/CST automatically)
-    # set at 8:23 to avoid top of the hour and high-volume intervals in the gh scheduler queue
-    - cron: '23 8 * * *'
-      timezone: 'America/Chicago'
+    # 8:23 AM Central Time (13:23 UTC during Daylight Saving Time)
+    - cron: '23 13 * * *'
   workflow_dispatch:
+    inputs:
+      deploy_only:
+        description: "Deploy to GitHub Pages only (skip benchmark pipeline, uses 0 tokens)"
+        type: boolean
+        default: false
+  push:
+    branches:
+      - main
+    paths:
+      - 'artifacts/**'
+      - 'scripts/build_dashboard.py'
+      - '.github/workflows/benchmark.yml'
 
-# grant runner write permissions so it can push artifacts back to main
 permissions:
   contents: write
   pages: write
-  id-token: write  # needed to verify GitHub Pages deployment tokens
+  id-token: write
+
+concurrency:
+  group: "pages-deploy"
+  cancel-in-progress: false
 
 jobs:
   run-benchmark:
@@ -21,10 +34,11 @@ jobs:
       - name: Log Timestamp
         run: |
           echo "Run started at: $(date)"
-          echo "Target schedule: 8:00 AM America/Chicago"
 
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -38,7 +52,9 @@ jobs:
       - name: Install Dependencies
         run: uv sync --frozen
 
+      # Step 1: Execute benchmark ONLY if scheduled or manually requested with deploy_only == false
       - name: Execute Benchmark Pipeline
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.deploy_only == false) }}
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENROUTER_BASE_URL: "https://openrouter.ai/api/v1"
@@ -56,8 +72,14 @@ jobs:
         run: |
           uv run python -c "import asyncio; from src.main import orchestrate_benchmark; asyncio.run(orchestrate_benchmark(send_email=True))"
 
+      # Step 2: If we skipped the benchmark, rebuild dashboard pages from existing local artifacts
+      - name: Rebuild Dashboard and Digest Archive Pages
+        if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy_only == true) }}
+        run: |
+          uv run python scripts/build_dashboard.py
+
+      # Step 3: Commit and push newly compiled artifacts back to main
       - name: Commit and Persist Artifacts Permanently
-        if: always()
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -65,10 +87,12 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new artifacts to commit."
           else
-            git commit -m "chore(telemetry): record benchmark run artifacts [skip ci]"
+            git commit -m "chore(telemetry): update dashboard and digest viewer [skip ci]"
+            git pull --rebase origin ${{ github.ref_name }}
             git push origin HEAD:${{ github.ref_name }}
           fi
 
+      # Step 4: Publish to GitHub Pages
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
