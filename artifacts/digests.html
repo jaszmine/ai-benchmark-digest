@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Digest Archive</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0d1117;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #c9d1d9;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .top-bar {
+      background-color: #161b22;
+      border-bottom: 1px solid #30363d;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #58a6ff;
+    }
+    .nav-btn {
+      background: #21262d;
+      color: #58a6ff;
+      border: 1px solid #30363d;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .nav-btn:hover {
+      background: #30363d;
+      border-color: #8b949e;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    select {
+      background: #21262d;
+      color: #f0f6fc;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      max-width: 320px;
+    }
+    .iframe-container {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      position: relative;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="brand-group">
+      <span class="brand-title">AI Benchmark Digest Archive</span>
+      <a href="index.html" class="nav-btn">← Back to Telemetry Dashboard</a>
+    </div>
+
+    <div class="controls">
+      <button class="nav-btn" onclick="stepRun(-1)" title="Previous Run">‹ Prev</button>
+      <select id="digestSelect" onchange="loadDigest(this.value)"></select>
+      <button class="nav-btn" onclick="stepRun(1)" title="Next Run">Next ›</button>
+      <a id="externalLink" href="#" target="_blank" class="nav-btn" style="color: #7ee787;">Open in New Tab ↗</a>
+    </div>
+  </div>
+
+  <div class="iframe-container">
+    <iframe id="digestFrame" src="about:blank"></iframe>
+  </div>
+
+  <script>
+    const digests = [{"idx": 0, "label": "Run 1 (Sep 09, 12:21 PM CDT)", "url": "digests/digest_preview_20260909_172115.html"}, {"idx": 1, "label": "Run 2 (Sep 09, 12:40 PM CDT)", "url": "digests/digest_preview_20260909_174004.html"}, {"idx": 2, "label": "Run 3 (Sep 09, 12:53 PM CDT)", "url": "digests/digest_preview_20260909_175326.html"}, {"idx": 3, "label": "Run 4 (Sep 09, 2:31 PM CDT)", "url": "digests/digest_preview_20260909_193134.html"}, {"idx": 4, "label": "Run 5 (Sep 09, 2:40 PM CDT)", "url": "digests/digest_preview_20260909_194011.html"}, {"idx": 5, "label": "Run 6 (Sep 09, 2:55 PM CDT)", "url": "digests/digest_preview_20260909_195556.html"}, {"idx": 6, "label": "Run 7 (Sep 09, 7:09 PM CDT)", "url": "digests/digest_preview_20260910_000933.html"}, {"idx": 7, "label": "Run 8 (Sep 09, 7:43 PM CDT)", "url": "digests/digest_preview_20260910_004356.html"}, {"idx": 8, "label": "Run 9 (Sep 09, 10:59 PM CDT)", "url": "digests/digest_preview_20260910_035920.html"}, {"idx": 9, "label": "Run 10 (Sep 09, 11:17 PM CDT)", "url": "digests/digest_preview_20260910_041742.html"}, {"idx": 10, "label": "Run 11 (Sep 09, 11:38 PM CDT)", "url": "digests/digest_preview_20260910_043810.html"}, {"idx": 11, "label": "Run 12 (Sep 09, 11:51 PM CDT)", "url": "digests/digest_preview_20260910_045157.html"}, {"idx": 12, "label": "Run 13 (Sep 10, 12:25 AM CDT)", "url": "digests/digest_preview_20260910_052557.html"}, {"idx": 13, "label": "Run 14 (Sep 10, 12:49 AM CDT)", "url": "digests/digest_preview_20260910_054930.html"}, {"idx": 14, "label": "Run 15 (Sep 10, 9:46 AM CDT)", "url": "digests/digest_preview_20260910_144653.html"}, {"idx": 15, "label": "Run 16 (Sep 11, 10:11 AM CDT)", "url": "digests/digest_preview_20260911_151135.html"}];
+    const selectElem = document.getElementById('digestSelect');
+    const frame = document.getElementById('digestFrame');
+    const extLink = document.getElementById('externalLink');
+
+    // Populate dropdown
+    digests.forEach((item, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = item.label;
+      selectElem.appendChild(opt);
+    });
+
+    // Handle deep-linking via query param (?run=X), or default to the most recent run
+    const params = new URLSearchParams(window.location.search);
+    let currentIdx = digests.length - 1;
+
+    if (params.has('run')) {
+      const parsedIdx = parseInt(params.get('run'), 10);
+      if (!isNaN(parsedIdx) && parsedIdx >= 0 && parsedIdx < digests.length) {
+        currentIdx = parsedIdx;
+      }
+    }
+
+    function loadDigest(idx) {
+      currentIdx = parseInt(idx, 10);
+      selectElem.value = currentIdx;
+      const targetUrl = digests[currentIdx].url;
+      frame.src = targetUrl;
+      extLink.href = targetUrl;
+
+      // Update URL query string without reloading page
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('run', currentIdx);
+      window.history.replaceState({}, '', newUrl);
+    }
+
+    function stepRun(direction) {
+      const nextIdx = currentIdx + direction;
+      if (nextIdx >= 0 && nextIdx < digests.length) {
+        loadDigest(nextIdx);
+      }
+    }
+
+    // Load initial digest
+    loadDigest(currentIdx);
+  </script>
+</body>
+</html>
