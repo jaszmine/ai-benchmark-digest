@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th { padding: 8px 12px; text-align: left; border-bottom: 1px solid #30363d; color: #8b949e; font-weight: 600; }
+    .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; color: #e6edf3 !important; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc !important; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff !important; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body style="background-color: #0d1117; color: #c9d1d9;">
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Metric</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track A (Deterministic)</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #8b949e;">Wall Clock Latency</td>
+            <td style="color: #e6edf3;"><strong>19.39s</strong></td>
+            <td style="color: #e6edf3;"><strong>127.64s</strong></td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Input / Prompt Tokens</td>
+            <td style="color: #e6edf3;">3100</td>
+            <td style="color: #e6edf3;">7294</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Reasoning (CoT) Tokens</td>
+            <td style="color: #e6edf3;">1365</td>
+            <td style="color: #e6edf3;">4269</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Completion Tokens</td>
+            <td style="color: #e6edf3;">2131</td>
+            <td style="color: #e6edf3;">6500</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Total Tokens Consumed</td>
+            <td style="color: #e6edf3;">5231</td>
+            <td style="color: #e6edf3;">13794</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Agentic Iterations / Turns</td>
+            <td style="color: #e6edf3;">1 (Single-pass)</td>
+            <td style="color: #e6edf3;">3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 9/10 reachable (90.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive" style="background-color: #1f242c; border-left: 3px solid #bc8cff;">
+      <h4 style="color: #d2a8ff;">Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary" style="color: #c9d1d9;">OpenAI’s GPT-6 Astra builds on the O1 series introduced in late 2024, which demonstrated steadily improving agentic capacity—the ability to formulate subgoals, plan over long horizons, and coordinate multi‑step actions. For Astra, the key technical decision was to scale this agentic reasoning component alongside the core language model, enabling the system to decompose open‑ended mathematical conjectures into sequences of lemmas, attempt proof sketches, and backtrack when a path fails. This architecture relies on a transformer backbone with expanded context windows and a reinforcement‑learning‑from‑human‑feedback (RLHF) loop that rewards correct intermediate derivations, not just final answers. Tradeoffs include substantially higher inference compute due to iterative planning and increased opacity, as the internal subgoal traces are not directly exposed to users. For practitioners, Astra offers a powerful assistant for automated theorem proving and hypothesis generation, potentially shortening research cycles in fields like cryptography, quantum physics, and optimization. However, outputs must be rigorously verified, as the model’s confidence scores do not guarantee mathematical correctness, and the added complexity demands careful monitoring of resource usage in production settings.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10715" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">NCP-ArchPreview Introduces Latent Space Language Modeling via Next Concept Prediction</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 129 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">NCP-ArchPreview extends autoregressive pretraining beyond standard next-token prediction by adding a Next Concept Prediction (NCP) objective in a latent space. The model jointly learns token-level and concept-level representations, yielding more sample-efficient learning and richer semantic embeddings. Experiments show reduced perplexity and improved performance on downstream reasoning and generation benchmarks compared to pure NTP baselines.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.11929" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">SenseNova-U1.5: 8B-MoT Native Unified Multimodal Model with Encoder‑Free VAE‑Free Architecture</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 102 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">SenseNova-U1.5 is an 8‑billion‑parameter Mixture‑of‑Transformers (MoT) model that processes vision and language inputs without separate encoders or variational autoencoders, enabling end‑to‑end unified understanding and generation. The architecture routes tokens through expert layers conditioned on modality, achieving state‑of‑the‑art results on visual question answering, image captioning, and text‑to‑image generation tasks. Ablation studies confirm that removing external encoders does not degrade performance while reducing inference latency.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.11042" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">T1: 122B Mixture‑of‑Experts Agent for Long‑Horizon Terminal Tasks via Reinforcement Learning</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 48 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">T1 is a sparse Mixture‑of‑Experts model with 122 billion total parameters designed for agentic usage in terminal environments, trained with reinforcement learning to handle long‑horizon tasks such as code generation and scientific workflow automation. The model employs expert routing that activates only a fraction of parameters per step, enabling efficient scaling. On multi‑step coding benchmarks (e.g., HumanEval‑Long), T1 achieves a 23% higher success rate than dense baselines of comparable compute.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.07064" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">SpatialBlock Boosts LVLM 3D Reasoning with Synthetic Block‑Stacking Pretraining</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 46 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">SpatialBlock introduces a synthetic block‑stacking pretraining task to improve the spatial intelligence of Large Vision‑Language Models (LVLMs) in inferring 3D structure from 2D images. By rendering diverse block configurations and predicting relative depths and occlusions, the auxiliary task encourages the model to learn explicit geometric reasoning. Evaluation on depth estimation, surface normal prediction, and novel view synthesis shows consistent gains of 5‑8% over LVLMs pretrained solely on image‑text pairs.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.05903" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">EvoSafeHarness Evolves Model‑ and Domain‑Specific Safety Harnesses for LLM Agents</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 35 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">EvoSafeHarness presents an automated evolutionary search method that crafts safety harnesses tailored to a specific LLM and its deployment domain, defending against both indirect prompt injections and direct harmful requests. The approach iteratively mutates and selects harness configurations (e.g., input filters, output classifiers, runtime monitors) using a red‑team‑driven fitness function. In experiments across three model families, the evolved harnesses reduce successful attack rates by over 70% while preserving &gt;90% of benign task performance.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.axios.com/2026/09/08/ai-math-anthropic-openai-google" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">OpenAI’s GPT-6 Astra Advances Longstanding Mathematical Problem Solving</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "AI is changing math - Axios" &bull; Tue, 08 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Axios &bull;
+          
+          
+            
+              <span class="tag-protected">&#9888; Protected (403)</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">OpenAI released a new model called GPT-6 Astra this week, which generated new results on longstanding open math problems. The model resolved or made &#34;substantial progress&#34; on decades-old math and theoretical computer science problems. This advancement suggests AI’s growing ability to tackle complex math could accelerate discoveries in medicine, engineering and other math‑dependent fields.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.reuters.com/science/ibm-nasa-launch-ai-model-help-map-ice-craters-moon-2026-09-10/" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">IBM and NASA Release Open‑Source AI Model for Lunar Ice and Crater Mapping</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "IBM, NASA launch AI model to help map ice, craters on Moon - Reuters" &bull; Thu, 10 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Reuters &bull;
+          
+          
+            
+              <span class="tag-protected">&#9888; Protected (401)</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">IBM and NASA jointly released an open‑source AI model designed to help scientists analyze decades of lunar observation data. The model supports plans for a sustained human presence on the Moon by mapping ice and craters. It is made freely available to the research community.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://thenextweb.com/news/openai-images-25-adobe-firefly-interface-layer" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">OpenAI’s ChatGPT Images 2.5 Integrated into Adobe Firefly</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "OpenAI&#39;s image models are now inside Adobe&#39;s Firefly - thenextweb.com" &bull; Tue, 08 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: The Next Web &bull;
+          
+          
+            
+              <span class="tag-dead">&#10007; Status 0</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">OpenAI released ChatGPT Images 2.5 with two new API models, one of which Adobe has already incorporated into its Firefly platform. The update notes that more than three billion images are generated weekly across ChatGPT and its image API. Notable additions include interface features such as the ability to share the prompt alongside the generated image.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://techcrunch.com/2026/09/09/suno-replaces-its-ai-models-with-a-new-one-trained-on-licensed-music-as-copyright-suits-pile-up/" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Suno Unveils Licensed‑Data Music Model v6 Amid Copyright Litigation</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Suno replaces its AI models with a new one trained on licensed music as copyright suits pile up - TechCrunch" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: TechCrunch &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Suno introduced a new model family, Suno v6, trained on licensed data from Warner Music Group, BMG and Believe. The company confirmed that Suno v6 does not use the training data from its previous models. Three versions are being released, with the base model available to paying users.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.urban.org/data%40urbans/using-agentic-ai-create-more-sophisticated-data-engineering-pipelines" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Agentic AI Enhances Data Engineering Pipelines with Git‑Based Manifests</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Using Agentic AI to Create More Sophisticated Data Engineering Pipelines" &bull; Tue, 08 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Infrastructure &amp; Tools</span> &bull; Source: Urban Institute &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">The pipeline now records a manifest JSON file for each run, capturing the git commit SHA and input file details to ensure traceability. This traceability lets teams trust agentic enforcement of data contracts because every artifact can prove its origin. A notable improvement is the automatic generation of these manifests to improve confidence in agentic tools.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
