@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th { padding: 8px 12px; text-align: left; border-bottom: 1px solid #30363d; color: #8b949e; font-weight: 600; }
+    .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; color: #e6edf3 !important; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc !important; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff !important; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body style="background-color: #0d1117; color: #c9d1d9;">
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Metric</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track A (Deterministic)</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #8b949e;">Wall Clock Latency</td>
+            <td style="color: #e6edf3;"><strong>18.54s</strong></td>
+            <td style="color: #e6edf3;"><strong>94.3s</strong></td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Input / Prompt Tokens</td>
+            <td style="color: #e6edf3;">3075</td>
+            <td style="color: #e6edf3;">7380</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Reasoning (CoT) Tokens</td>
+            <td style="color: #e6edf3;">1118</td>
+            <td style="color: #e6edf3;">3299</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Completion Tokens</td>
+            <td style="color: #e6edf3;">1907</td>
+            <td style="color: #e6edf3;">5334</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Total Tokens Consumed</td>
+            <td style="color: #e6edf3;">4982</td>
+            <td style="color: #e6edf3;">12714</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Agentic Iterations / Turns</td>
+            <td style="color: #e6edf3;">1 (Single-pass)</td>
+            <td style="color: #e6edf3;">3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 9/10 reachable (90.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive" style="background-color: #1f242c; border-left: 3px solid #bc8cff;">
+      <h4 style="color: #d2a8ff;">Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary" style="color: #c9d1d9;">OpenAI’s internal system that produced the Navier–Stokes singularity proof combines a large language model fine‑tuned for mathematical reasoning with an automated theorem‑proving pipeline targeting the Lean proof assistant. The language model generates informal proof sketches and intermediate lemmas, which are then translated into Lean tactics via a neuro‑symbolic translator; reinforcement learning rewards steps that lead to closed proofs while penalizing detours. A key technical decision was to restrict the search to fragments of analysis amenable to formalization in Lean, thereby avoiding undecidable regions and keeping the search space tractable. The trade‑off is substantial compute expenditure—training and inference required thousands of GPU‑hours—and reliance on human experts to validate the final Lean proof and interpret its implications for the original PDE problem. For practitioners, this demonstrates that frontier AI can assist in grand‑challenge mathematics by providing conjectural pathways and machine‑checkable derivations, potentially accelerating work on other Millennium Problems. It also highlights the necessity of robust verification pipelines: AI‑generated suggestions must be subjected to rigorous formal checking before acceptance, reshaping workflows for mathematicians who now blend intuition‑driven exploration with AI‑guided formalization.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10715" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">NCP-ArchPreview Introduces Next Concept Prediction for Latent Space Language Modeling</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 132 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">NCP-ArchPreview extends autoregressive pretraining by adding a Next Concept Prediction (NCP) objective alongside standard next-token prediction, enabling the model to learn abstract latent concepts in a continuous space. The approach yields a latent-space language model that improves sample efficiency and generalization while retaining compatibility with existing transformer architectures. Experiments show gains in perplexity and downstream reasoning tasks compared to pure token-level training.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.11929" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">SenseNova-U1.5: 8B-MoT Encoder‑Free Unified Multimodal Model</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 108 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">SenseNova-U1.5 is an 8‑billion‑parameter Mixture‑of‑Transformers (MoT) model that processes visual and linguistic inputs without an encoder or VAE, directly understanding, reasoning about, and generating visual content. The encoder‑free design reduces computational overhead and enables end‑to‑end training on mixed‑modality corpora. Benchmarks demonstrate state‑of‑the‑art performance on image captioning, visual question answering, and text‑to‑image generation.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.11042" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">T1: 122B Mixture‑of‑Experts Agent for Long‑Horizon Terminal Tasks via Reinforcement Learning</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 48 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">T1 scales a Mixture‑of‑Experts (MoT) architecture to 122 B total parameters and trains it with reinforcement learning to solve long‑horizon terminal‑based tasks such as coding and scientific discovery. The model learns to assign credit across thousands of steps, leveraging sparse expert activation for efficient computation. Results show substantial improvements over baseline agents on multi‑step programming benchmarks and interactive science environments.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.07064" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">SpatialBlock: Synthetic Block‑Stacking Boosts 3D Spatial Reasoning in LVLMs</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 47 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">SpatialBlock introduces a synthetic block‑stacking dataset to train Large Vision‑Language Models (LVLMs) in reconstructing and reasoning about 3D scene structure from 2D images without costly real‑world annotations. By learning to predict block configurations, the model gains strong spatial intuition that transfers to downstream tasks like depth estimation and pose prediction. Ablation studies confirm that the synthetic task significantly improves spatial metrics while preserving general VL performance.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.05903" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">EvoSafeHarness: Evolutionary Generation of Model‑ and Domain‑Specific Safety Harnesses for LLM Agents</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 35 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">EvoSafeHarness proposes an evolutionary algorithm that automatically crafts safety harnesses tailored to a specific LLM agent and its deployment domain, defending against both indirect prompt injections and direct harmful requests. The harnesses are expressed as runtime filters and action validators, optimized via a fitness function that balances safety and utility. Experiments on multiple agent benchmarks show reduced attack success rates with minimal impact on task performance.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://openai.com/index/navier-stokes-solution" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">OpenAI Internally Proves Navier–Stokes Singularity Using AI‑Driven Theorem Proving</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "On the Navier–Stokes Millennium Prize Problem | OpenAI" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: OpenAI &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">OpenAI announced that an internal AI system produced a proof showing the Navier–Stokes equations can develop a finite‑time singularity, addressing one of the Clay Mathematics Institute’s Millennium Prize Problems. The proof includes a human‑readable writeup and a formalization in the Lean theorem prover for machine verification. This marks the first time an AI‑generated solution has been offered for a major open problem in mathematical physics.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://newsroom.ibm.com/2026-09-10-ibm-and-nasa-release-open-source-ai-model-to-support-lunar-exploration" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">IBM and NASA Release Open‑Source Lunar Foundation Model for Moon Science</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "IBM and NASA Release Open-Source AI Model to Support Lunar Exploration" &bull; Thu, 10 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: IBM Newsroom &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">IBM and NASA unveiled the NASA‑IBM Lunar Foundation Model, an open‑source foundation model trained on a curated multi‑instrument lunar dataset. The model enables scientists to convert decades of complex Moon observations into actionable insights for exploration and research. It is described as one of the first publicly available foundation models dedicated to scientific exploration of the Moon.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.cbsnews.com/news/openai-hugging-face-hack-ai-risks" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">OpenAI Unveils GPT‑6 Astra, Its Most Capable Broadly Deployed Model</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "The OpenAI-Hugging Face hack was just the beginning, experts say" &bull; Thu, 10 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: CBS News &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Following the Hugging Face incident, OpenAI released GPT‑6 Astra, describing it as the most capable model it has ever broadly deployed and the first to reach the Critical level of cybersecurity capability. The model’s system card highlights its advanced safety and alignment features. Astra represents a major step in OpenAI’s push toward frontier‑scale AI systems.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://startupfortune.com/anthropic-openai-meta-and-google-all-shipped-new-ai-models-in-one-week" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Anthropic Launches Claude Fable 5.1, Its New Frontier Model</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Anthropic, OpenAI, Meta and Google All Shipped New AI ..." &bull; Sun, 06 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Startup Fortune &bull;
+          
+          
+            
+              <span class="tag-dead">&#10007; Status 0</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Anthropic introduced Claude Fable 5.1 (and a companion Mythos 5.1) as its most capable model to date, released alongside new models from OpenAI, Meta, and Google in a single week. The release underscores the rapid pace of frontier model deployment across leading AI labs. Claude Fable 5.1 is positioned as a state‑of‑the‑art language model with improved reasoning and safety.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.prnewswire.com/news-releases/ieee-unveils-the-ieee-xplore-ai-research-suite-a-new-ai-assistant-built-on-verified-expert-vetted-research-302874617.html" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">IEEE Launches Xplore AI Research Suite for Full‑Text Paper Reasoning</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "IEEE Unveils the IEEE Xplore® AI Research Suite - PR Newswire" &bull; Thu, 10 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Infrastructure &amp; Tools</span> &bull; Source: PR Newswire &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">IEEE unveiled the Xplore® AI Research Suite, an AI assistant that can read and reason over the complete text of millions of peer‑reviewed IEEE publications, not just abstracts. By grounding answers in full‑text, verified science, the tool aims to deliver significantly higher accuracy for researchers. The suite is built on expert‑vetted research and integrates directly with IEEE Xplore.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
