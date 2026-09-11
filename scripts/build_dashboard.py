@@ -1,5 +1,6 @@
 import json
 import re
+import shutil
 import traceback
 import urllib.request
 from collections import Counter
@@ -296,9 +297,8 @@ def extract_run_data_from_html(html_path):
                         date_str_display = fallback_date
                         delta_days = fallback_delta
 
-                # 4. Fallback if site blocked crawler (e.g. 403 on The Information / Bloomberg)
+                # 5. Fallback if site blocked crawler (e.g. 403 on The Information / Bloomberg)
                 if delta_days is None:
-                    # If the story was ingested during this run from Techmeme RSS, it is fresh (< 24h)
                     date_str_display = run_dt.strftime("%b %d, %Y")
                     delta_days = 0.0
 
@@ -348,16 +348,23 @@ def extract_run_data_from_html(html_path):
 def generate_dashboard():
     project_root = Path(__file__).resolve().parent.parent
     artifacts_dir = project_root / "artifacts"
-    artifacts_dir.mkdir(exist_ok=True)
+    digests_dir = artifacts_dir / "digests"
+    data_dir = artifacts_dir / "data"
 
+    artifacts_dir.mkdir(exist_ok=True)
+    digests_dir.mkdir(exist_ok=True)
+    data_dir.mkdir(exist_ok=True)
+
+    # Consolidate loose files from root if any exist
     for loose_file in project_root.glob("digest_preview_*.html"):
-        target = artifacts_dir / loose_file.name
+        target = digests_dir / loose_file.name
         if not target.exists():
             loose_file.replace(target)
-            print(f"[Dashboard] Consolidated {loose_file.name} -> artifacts/")
+            print(f"[Dashboard] Consolidated {loose_file.name} -> artifacts/digests/")
 
-    html_files = sorted(artifacts_dir.glob("digest_preview_*.html"))
-    print(f"[Dashboard] Found {len(html_files)} snapshot file(s) in artifacts/")
+    # Search both digests subfolder and legacy root artifacts/
+    html_files = sorted(set(list(digests_dir.glob("digest_preview_*.html")) + list(artifacts_dir.glob("digest_preview_*.html"))))
+    print(f"[Dashboard] Found {len(html_files)} snapshot file(s)")
 
     runs = []
     for hf in html_files:
@@ -754,9 +761,15 @@ def generate_dashboard():
 </body>
 </html>"""
 
-    output_path = artifacts_dir / "dashboard.html"
-    output_path.write_text(dashboard_html, encoding="utf-8")
-    print(f"[Dashboard] Rendered multi-metric telemetry dashboard to: {output_path}")
+    # 1. Output index.html for default GitHub Pages routing
+    index_path = artifacts_dir / "index.html"
+    index_path.write_text(dashboard_html, encoding="utf-8")
+
+    # 2. Output dashboard.html for backward compatibility
+    dashboard_path = artifacts_dir / "dashboard.html"
+    shutil.copyfile(index_path, dashboard_path)
+
+    print(f"[Dashboard] Rendered multi-metric telemetry dashboard to: {index_path} and {dashboard_path}")
 
 
 if __name__ == "__main__":

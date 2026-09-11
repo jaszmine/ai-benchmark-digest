@@ -11,6 +11,8 @@ on:
 # grant runner write permissions so it can push artifacts back to main
 permissions:
   contents: write
+  pages: write
+  id-token: write  # needed to verify GitHub Pages deployment tokens
 
 jobs:
   run-benchmark:
@@ -66,3 +68,15 @@ jobs:
             git commit -m "chore(telemetry): record benchmark run artifacts [skip ci]"
             git push origin HEAD:${{ github.ref_name }}
           fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'artifacts/'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

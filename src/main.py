@@ -61,19 +61,23 @@ async def orchestrate_benchmark(send_email: bool = False):
         track_a_output, track_b_output, scorecard, link_results
     )
 
-    # Save artifacts
+    # Save artifacts into dedicated subdirectories
     artifacts_dir = Path(__file__).resolve().parent.parent / "artifacts"
-    artifacts_dir.mkdir(exist_ok=True)
+    digests_dir = artifacts_dir / "digests"
+    data_dir = artifacts_dir / "data"
 
-    html_path = artifacts_dir / f"digest_preview_{timestamp}.html"
+    digests_dir.mkdir(parents=True, exist_ok=True)
+    data_dir.mkdir(parents=True, exist_ok=True)
+
+    html_path = digests_dir / f"digest_preview_{timestamp}.html"
     html_path.write_text(html_output, encoding="utf-8")
     print(f"[Renderer] HTML digest snapshot saved to: {html_path}")
 
-    json_path = artifacts_dir / f"run_{timestamp}.json"
+    json_path = data_dir / f"run_{timestamp}.json"
     json_path.write_text(json.dumps(scorecard, indent=2), encoding="utf-8")
     print(f"[Telemetry] Saved run scorecard to: {json_path}")
 
-    # Rebuild dashboard
+    # Rebuild dashboard (outputs to artifacts/index.html & artifacts/dashboard.html)
     print("[Dashboard] Rebuilding interactive telemetry dashboard...")
     generate_dashboard()
 
