@@ -20,6 +20,7 @@ Analyze the collected research notes and synthesize:
 2. A ~200-word architectural deep-dive focused on the single most significant development (#1). Detail how it works under the hood, key technical decisions, tradeoffs, and implications for practitioners.
 
 Strict Constraints:
+- ACCURATE HEADLINES: The 'title' field must be the actual, factual headline of the published article. Do NOT invent fanciful names, unannounced model versions, or extrapolate beyond what is documented in the source.
 - Every story MUST have a completely UNIQUE canonical URL.
 - Retain the exact "Original Title" and "Published Date" verbatim from the research notes.
 - Grounding: Your 2-3 sentence summary MUST reflect only what is actually reported in the excerpt. Do NOT invent evaluations, synthetic model links, or claims not present in the notes.
@@ -31,7 +32,7 @@ Return valid JSON matching this schema:
 {{
   "stories": [
     {{
-      "title": "Your enhanced technical headline",
+      "title": "Exact or faithful headline from the article",
       "original_title": "Original Title copied verbatim from notes",
       "published_date_str": "Published Date copied verbatim (e.g. Sept. 8, 2026)",
       "url": "Canonical URL from findings",
@@ -167,7 +168,6 @@ async def run_track_b() -> tuple[TrackOutput, dict]:
     seen_urls = set()
     deduped_stories: list[StoryItem] = []
     for raw_item in parsed.get("stories", []):
-        # Defensive fill if model missed schema keys
         if not raw_item.get("source"):
             raw_item["source"] = "Industry & Models"
         if not raw_item.get("category"):
