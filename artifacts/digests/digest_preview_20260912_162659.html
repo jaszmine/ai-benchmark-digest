@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th { padding: 8px 12px; text-align: left; border-bottom: 1px solid #30363d; color: #8b949e; font-weight: 600; }
+    .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; color: #e6edf3 !important; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc !important; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff !important; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body style="background-color: #0d1117; color: #c9d1d9;">
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Metric</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track A (Deterministic)</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #8b949e;">Wall Clock Latency</td>
+            <td style="color: #e6edf3;"><strong>108.35s</strong></td>
+            <td style="color: #e6edf3;"><strong>105.17s</strong></td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Input / Prompt Tokens</td>
+            <td style="color: #e6edf3;">2891</td>
+            <td style="color: #e6edf3;">7270</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Reasoning (CoT) Tokens</td>
+            <td style="color: #e6edf3;">1820</td>
+            <td style="color: #e6edf3;">3241</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Completion Tokens</td>
+            <td style="color: #e6edf3;">2497</td>
+            <td style="color: #e6edf3;">5021</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Total Tokens Consumed</td>
+            <td style="color: #e6edf3;">5388</td>
+            <td style="color: #e6edf3;">12291</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Agentic Iterations / Turns</td>
+            <td style="color: #e6edf3;">1 (Single-pass)</td>
+            <td style="color: #e6edf3;">3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 9/10 reachable (90.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive" style="background-color: #1f242c; border-left: 3px solid #bc8cff;">
+      <h4 style="color: #d2a8ff;">Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary" style="color: #c9d1d9;">The OpenAI claim that its internal model proved the Navier‑Stokes equations are fatally flawed centers on a machine‑generated proof that a smooth fluid flow can develop a singularity—velocity blowing up in finite time. Under the hood, the system likely combines a large language model fine‑tuned on mathematical corpora with a symbolic reasoning layer that proposes proof steps, which are then fed into the Lean proof assistant for formal verification. Key technical decisions include using the model to generate high‑level proof sketches, relying on Lean’s kernel to check each inference, and iterating via reinforcement learning from proof‑checking feedback. Tradeoffs emerge: the proof remains tied to an internal, non‑public model, limiting external reproducibility, and the controversy stems from allegations that OpenAI appropriated a method developed by outside mathematicians. For practitioners, the work illustrates both the promise of AI‑assisted theorem proving—automating exploration of vast proof spaces—and the pressing need for transparency, open model releases, and rigorous community verification before accepting AI‑derived results as canonical mathematical knowledge.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.11929" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">SenseNova-U1.5: 8B‑Parameter Encoder‑Free Unified Multimodal Model</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 168 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">We launch SenseNova-U1.5, an 8B‑parameter Mixture‑of‑Transformers (MoT) model that unifies vision and language in an encoder‑free, VAE‑free architecture. It jointly understands, reasons about, and generates visual content by processing image patches as tokens alongside text. The design removes heavyweight visual encoders, reducing latency while preserving strong multimodal performance on benchmarks such as VQA and image captioning.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10715" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">NCP‑ArchPreview: Latent‑Space Language Modeling via Next Concept Prediction</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 202 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">NCP‑ArchPreview introduces a latent‑space language model that augments standard next‑token prediction with a Next Concept Prediction (NTP) objective, encouraging the model to discover and predict higher‑level semantic concepts in a continuous latent space. The model learns a shared latent representation where concepts are encoded as vectors, enabling more abstract reasoning and controllable generation. Experiments show improved perplexity and downstream task performance compared to pure token‑level pretraining.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.07064" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">SpatialBlock: Synthetic Block‑Stacking for 3D Reasoning in LVLMs</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 83 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">SpatialBlock proposes a synthetic block‑stacking dataset to train Large Vision‑Language Models (LVLMs) in explicit 3D spatial reasoning from 2D images. By supervising the model to predict stable block configurations and reason about support relations, the approach bridges the gap between perception and physical intuition. LVLMs fine‑tuned on this data exhibit significant gains on spatial understanding benchmarks such as CLEVR‑3D and ScanQA.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.11412" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">X‑AuT: Progressive Audio‑Encoder Compression for Speech LLMs via Cross‑Scale Distillation</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 34 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">X‑AuT presents a progressive compression scheme for speech‑LLM audio encoders, where encoder layers are removed incrementally and the remaining layers are trained via cross‑scale distillation to preserve the original embedding distribution. The method mitigates the degradation caused by naïve depth reduction, maintaining phonetic and prosodic information critical for downstream speech tasks. Results show up to 40% FLOPs reduction with minimal WER increase on LibriSpeech.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.11486" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">FreeFlow: Bias‑Free Hierarchical Transformer for Optical Flow Estimation</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 26 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">FreeFlow replaces traditional optical flow pipelines that rely on correlation volumes, warping, and iterative refinement with a bias‑free hierarchical transformer that directly predicts flow from raw image patches. By stacking transformer blocks at multiple resolutions and using self‑attention to capture long‑range dependencies, the model learns flow estimation end‑to‑end without hand‑crafted inductive biases. On Sintel and KITTI benchmarks, FreeFlow achieves comparable or better EPE scores while running faster due to its parallelizable architecture.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.wired.com/story/mathematician-steven-strogatz-grapples-with-ai-recent-breakthroughs" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">‘I’m Really Terrified’: A Mathematician Grapples With AI’s Recent Breakthroughs</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "‘I’m Really Terrified’: A Mathematician Grapples With AI’s Recent Breakthroughs" &bull; Sat, 12 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: Wired &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Anthropic&#39;s Claude proved 29,500 small theorems while formalizing a proof of Fermat’s Last Theorem, and OpenAI reported advancements in 10 other long-standing mathematical problems. Strogatz notes AI is accelerating mathematical breakthroughs, raising questions about the future role of human experts. The piece captures both excitement and concern among mathematicians.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.reuters.com/science/ibm-nasa-launch-ai-model-help-map-ice-craters-moon-2026-09-10" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">IBM, NASA launch AI model to help map ice, craters on Moon</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "IBM, NASA launch AI model to help map ice, craters on Moon" &bull; Thu, 10 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Infrastructure &amp; Tools</span> &bull; Source: Reuters &bull;
+          
+          
+            
+              <span class="tag-protected">&#9888; Protected (401)</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">IBM and NASA released the open-source NASA-IBM Lunar Foundation Model to analyze decades of lunar observation data and support sustained human presence on the Moon. The model was trained on over 30 layers of data from nine instruments across four NASA missions. It provides a publicly available tool for studying lunar geology.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.scientificamerican.com/article/openai-claims-blockbuster-math-breakthrough-amid-swirl-of-controversy" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">OpenAI claims blockbuster math breakthrough amid swirl of controversy</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "OpenAI claims blockbuster math breakthrough amid swirl of controversy" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: Scientific American &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">OpenAI announced its internal model proved the Navier-Stokes equations are fatally flawed, suggesting fluid motion can develop a singularity in finite time. The claim follows allegations from mathematician Tristan Buckmaster that OpenAI used a method he and a colleague were developing, which OpenAI denies. The announcement has sparked debate over proof validity and transparency.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://thejournal.com/articles/2026/09/10/ai-models-generate-advances-in-mathematical-research.aspx" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">AI Models Generate Advances in Mathematical Research</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "AI Models Generate Advances in Mathematical Research" &bull; Fri, 11 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: The Journal &bull;
+          
+          
+            
+              <span class="tag-dead">&#10007; Status 520</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">OpenAI presented a proof that the Navier-Stokes equations can develop a singularity, where fluid velocity grows without bound in finite time, based on a 90‑year‑old problem. The proof and a Lean‑formalized, computer‑checkable version were released. The work highlights AI’s potential to tackle longstanding mathematical challenges.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.cbsnews.com/news/ai-model-framework-white-house" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">White House framework for testing AI models remains hidden as concerns about threats mount</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "White House framework for testing AI models remains hidden as concerns about threats mount" &bull; Thu, 10 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Policy &amp; Ethics</span> &bull; Source: CBS News &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">The U.S. administration’s framework for evaluating new AI models is kept confidential, leaving unclear what standards companies must meet or whether they disclose breakthroughs. Neither the government nor firms are required to share review results or participation details. OpenAI’s CEO said the company submitted its powerful model for review.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
