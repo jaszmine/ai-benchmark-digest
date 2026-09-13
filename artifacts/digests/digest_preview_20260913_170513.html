@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th { padding: 8px 12px; text-align: left; border-bottom: 1px solid #30363d; color: #8b949e; font-weight: 600; }
+    .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; color: #e6edf3 !important; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc !important; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff !important; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body style="background-color: #0d1117; color: #c9d1d9;">
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Metric</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track A (Deterministic)</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #8b949e;">Wall Clock Latency</td>
+            <td style="color: #e6edf3;"><strong>40.1s</strong></td>
+            <td style="color: #e6edf3;"><strong>273.15s</strong></td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Input / Prompt Tokens</td>
+            <td style="color: #e6edf3;">1993</td>
+            <td style="color: #e6edf3;">3760</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Reasoning (CoT) Tokens</td>
+            <td style="color: #e6edf3;">1929</td>
+            <td style="color: #e6edf3;">4245</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Completion Tokens</td>
+            <td style="color: #e6edf3;">2566</td>
+            <td style="color: #e6edf3;">5845</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Total Tokens Consumed</td>
+            <td style="color: #e6edf3;">4559</td>
+            <td style="color: #e6edf3;">9605</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Agentic Iterations / Turns</td>
+            <td style="color: #e6edf3;">1 (Single-pass)</td>
+            <td style="color: #e6edf3;">2 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 10/10 reachable (100.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive" style="background-color: #1f242c; border-left: 3px solid #bc8cff;">
+      <h4 style="color: #d2a8ff;">Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary" style="color: #c9d1d9;">The Time article points to a measurable rise in agentic capacity since the release of the o1 models in late 2024, describing how these systems now manage complex, long‑duration tasks, formulate plans, and coordinate with other agents. While the excerpt does not disclose the exact architecture, the behavior aligns with known advances in large language models that integrate chain‑of‑thought reasoning, external tool use, and learned planning modules. The o1 family likely employs a transformer backbone augmented with reinforcement learning from human feedback (RLHF) that rewards multi‑step reasoning and the generation of subgoals, enabling the model to decompose a high‑level objective into a sequence of actionable steps. A key technical decision appears to be the allocation of additional compute to a dedicated &#34;planner&#34; subnetwork that proposes and refines subgoals before execution, a design that improves task success rates but reduces direct human oversight. Tradeoffs include higher inference latency and greater susceptibility to unintended side effects when the planner operates autonomously, which the article notes as a source of risk. For practitioners, the implication is that deploying such agentic systems requires robust monitoring, fail‑safe mechanisms, and clear boundaries on tool access to harness the performance gains while mitigating safety concerns.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.11929" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">SenseNova-U1.5: 8B-MoT Native Unified Multimodal Model</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 230 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">SenseNova-U1.5 introduces an 8-billion-parameter mixture-of-transformers (MoT) architecture that unifies vision and language understanding without external encoders or VAEs, enabling end-to-end multimodal reasoning. The model demonstrates strong performance across image captioning, visual question answering, and text-to-image generation benchmarks, rivaling larger specialized models. Its encoder‑free design reduces latency and memory footprint, making it suitable for deployment on edge devices.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10712" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Open Recipe for Training Nemotron to Achieve IMO Gold‑Level Mathematical Reasoning</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 37 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">This work details a post‑training pipeline that transforms Nemotron 3 Ultra into a specialist capable of generating natural‑language proofs for International Mathematical Olympiad problems. By combining supervised fine‑tuning on curated competition data with test‑time search strategies, the model reaches gold‑medal performance on a held‑out set of IMO‑style tasks. The recipe highlights the importance of data mixture, reward modeling, and verifier‑guided decoding for advancing formal reasoning in LLMs.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.11699" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Negative Self‑Distillation: Improving LLM Reasoning by Learning to Avoid Flaws</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 30 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Negative Self‑Distillation flips the usual self‑distillation paradigm by training a model to recognize and suppress its own erroneous reasoning traces, using them as negative examples. The approach yields consistent gains on reasoning benchmarks such as GSM‑8K and MATH without requiring external teacher models or additional data. Experiments show that the method improves calibration and reduces hallucination rates in large language models.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.10445" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Data Mixing as a Pillar for Multilingual In‑Language Reasoning</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 29 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">The study investigates how mixing multilingual corpora during pretraining affects a model’s ability to reason in non‑English languages, finding that balanced data mixing significantly improves in‑language reasoning while preserving English performance. Ablations reveal that language‑specific data proportions and curriculum scheduling are critical factors for closing the multilingual reasoning gap. The results provide a principled recipe for building truly multilingual reasoning models.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.11486" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">FreeFlow: Bias‑Free Hierarchical Transformer for Accurate Optical Flow Estimation</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 38 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">FreeFlow proposes a hierarchical transformer architecture that estimates optical flow without relying on traditional biases such as correlation volumes or iterative refinement, instead using multi‑scale self‑attention to capture motion patterns. The model achieves state‑of‑the‑art accuracy on Sintel and KITTI benchmarks while being simpler and more parallelizable than classic flow networks. Ablation studies show that each hierarchical level contributes to handling both small‑scale details and large‑displacement motions.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://time.com/article/2026/09/09/ai-is-at-a-turning-point" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">AI Is at a Turning Point</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "AI Is at a Turning Point" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Time &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">The article highlights that AI models have steadily gained agentic abilities since the o1 models debuted in late 2024, allowing them to handle intricate, lengthy tasks and multi‑agent planning. This progress includes the autonomous formation of subgoals, often operating with minimal human supervision. The piece frames this as a turning point in AI development.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.rollingstone.com/music/music-news/suno-new-model-v6-warner-music-group-1235623431" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Is AI Music Going Legit? Suno Launches New Models Built on a Major Label Catalog</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Is AI Music Going Legit? Suno Launches New Models Built on a Major Label Catalog" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Rolling Stone &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">After facing a copyright lawsuit in 2024, AI music generator Suno has launched new models trained on licensed recordings from Warner Music Group. The move aims to legitimize AI‑generated music by using authorized label content. The article notes this as a step toward resolving legal tensions in the AI‑music space.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.aljazeera.com/news/2026/9/9/china-slams-us-claims-of-industrial-scale-ai-theft" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">China slams US claims of &#39;industrial-scale&#39; AI theft - Al Jazeera</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "China slams US claims of &#39;industrial-scale&#39; AI theft - Al Jazeera" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Policy &amp; Ethics</span> &bull; Source: Al Jazeera &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">The article reports that OpenAI has unveiled its latest AI model amid growing scrutiny and safety worries, while the China‑US AI competition intensifies, prompting strategic decisions in Egypt. It also notes that Chinese firms have been extracting billions of tokens from US models since late 2024, and an Anthropic researcher warned the AI race could be existential.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://news.microsoft.com/source/2026/09/09/aft-uft-and-microsoft-announce-national-ai-safety-privacy-standard-for-schools-to-protect-students-families-and-educators" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">AFT, UFT and Microsoft announce ‘National AI Safety &amp; Privacy Standard’ for schools to protect students, families and educators</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "AFT, UFT and Microsoft announce ‘National AI Safety &amp; Privacy Standard’ for schools to protect students, families and educators" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Policy &amp; Ethics</span> &bull; Source: Microsoft &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">The AFT, UFT and Microsoft unveiled a National AI Safety &amp; Privacy Standard for schools, building on the AFT’s 2024 Commonsense Guardrails that set nine core principles for student and family protection. The initiative also includes the National Academy for AI Instruction to train educators on proper AI use and misuse. The effort aims to embed safety and privacy into school AI adoption.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.interconnects.ai/p/open-source-ai-reading-list" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Open-Source AI &amp; Open Models Reading List</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Open-Source AI &amp; Open Models Reading List" &bull; Fri, 11 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: Interconnects &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">The reading list highlights an early paper finding that text‑focused LLMs only marginally raise documented model risks, while also noting a significant decline in open data that hinders open AI research. It points to the &#34;Consent in Crisis&#34; study as evidence of the shrinking AI data commons. The list suggests these trends shape the societal impact of open foundation models.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
