@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th { padding: 8px 12px; text-align: left; border-bottom: 1px solid #30363d; color: #8b949e; font-weight: 600; }
+    .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; color: #e6edf3 !important; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc !important; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff !important; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body style="background-color: #0d1117; color: #c9d1d9;">
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Metric</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track A (Deterministic)</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #8b949e;">Wall Clock Latency</td>
+            <td style="color: #e6edf3;"><strong>22.84s</strong></td>
+            <td style="color: #e6edf3;"><strong>150.78s</strong></td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Input / Prompt Tokens</td>
+            <td style="color: #e6edf3;">2899</td>
+            <td style="color: #e6edf3;">7560</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Reasoning (CoT) Tokens</td>
+            <td style="color: #e6edf3;">757</td>
+            <td style="color: #e6edf3;">4960</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Completion Tokens</td>
+            <td style="color: #e6edf3;">1593</td>
+            <td style="color: #e6edf3;">7455</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Total Tokens Consumed</td>
+            <td style="color: #e6edf3;">4492</td>
+            <td style="color: #e6edf3;">15015</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Agentic Iterations / Turns</td>
+            <td style="color: #e6edf3;">1 (Single-pass)</td>
+            <td style="color: #e6edf3;">3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 10/10 reachable (100.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive" style="background-color: #1f242c; border-left: 3px solid #bc8cff;">
+      <h4 style="color: #d2a8ff;">Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary" style="color: #c9d1d9;">The OpenAI breakthrough centers on an unreleased model characterized as ‘significantly more capable than GPT‑6 Astra.’ While the architectural details are undisclosed, the claim implies advances in scale, training data, or reasoning‑oriented mechanisms such as mixture‑of‑experts layers, enhanced chain‑of‑thought prompting, or improved reinforcement learning from human feedback. The model was not used in isolation; instead, roughly ten thousand AI agents operated in parallel, likely generating and scoring candidate proof steps in a large‑scale search over the formal space of the Navier‑Stokes existence and smoothness problem. Human researchers guided this swarm, providing high‑level intuition, pruning unpromising branches, and synthesizing intermediate results into a coherent solution. This hybrid human‑AI agent approach trades off massive computational overhead and complex coordination for the ability to explore vast combinatorial proof spaces that would be infeasible for a single model or a small team. For practitioners, the work signals a shift toward orchestrating large fleets of specialized agents for scientific discovery, necessitating new tooling for agent communication, result aggregation, and rigorous verification. It also raises questions about reproducibility, credit attribution, and the suitability of traditional prize structures when solutions emerge from extensive AI‑human collaboration rather than a solitary insight.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.13356" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">ZGCM-1: A Fully Open 7B Foundation Model Optimized for Math and Agentic Search</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 294 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">ZGCM-1 is a 7-billion-parameter dense model trained from scratch with extreme data, system, and algorithmic efficiency, targeting mathematical reasoning and agentic search tasks. It demonstrates strong performance on math benchmarks while maintaining low inference cost, showing that compact models can rival larger counterparts when optimized holistically. The model is fully open, including weights and training code, enabling reproducible research and downstream adaptation.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.14973" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">PhysBrain 1.5: Unified Vision-Language-Action Model for Physical Environment Understanding</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 172 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">PhysBrain 1.5 integrates perception, language, and action to model the physical loop of observation, interaction, and environment prediction. It can understand physical scenes, generate plausible actions, and forecast future states, effectively bridging vision-language models with physical reasoning. The unified architecture enables zero-shot transfer to novel physical tasks, advancing the development of general-purpose embodied AI.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.15504" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Orthrus: Hybrid Autoregressive-Diffusion Architecture for Lossless Speculative Decoding</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 27 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Orthrus combines a frozen autoregressive backbone with a parallel diffusion head to generate multiple tokens per step while preserving exact autoregressive outputs. The method addresses numerical precision challenges that can break losslessness in speculative decoding, providing a rigorous analysis of when and why approximations fail. Experiments show significant speedups on language modeling benchmarks without sacrificing output fidelity.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.15364" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">RSIAgent: Training-Free Multi-Agent Framework for Autonomous Recursive Self-Improvement</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 24 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">RSIAgent enables digital agents to autonomously explore and improve themselves in new environments without additional training, using a multi-agent setup where agents critique and refine each other&#39;s behaviors. The framework leverages existing pretrained models as building blocks, allowing agents to discover novel tools and strategies through interaction. Results demonstrate rapid adaptation to unseen interfaces and failure modes, highlighting a path toward self‑evolving AI systems.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://withspecific.com/benchmarks/real-swe" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Real-SWE Benchmark: Evaluating AI Models on Private, Real-World Enterprise Codebases</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Infrastructure &amp; Tools</span> &bull;
+          Source: Hacker News
+          
+            &bull; <span style="color: #ff6600; font-weight: 600;">&#9650; 274 points</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Real-SWE provides a benchmark suite that evaluates AI coding models on actual private enterprise codebases, capturing the complexity and proprietary nature of industrial software. It measures correctness, style adherence, and integration effort across diverse languages and frameworks, offering a more realistic assessment than public-code benchmarks. Early results reveal significant gaps between model performance on public benchmarks and their utility in real engineering workflows.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://gizmodo.com/the-fight-over-openais-math-breakthrough-is-a-new-kind-of-scientific-arms-race-2000809240" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">The Fight Over OpenAI’s Math Breakthrough Is a New Kind of Scientific Arms Race - Gizmodo</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "The Fight Over OpenAI’s Math Breakthrough Is a New Kind of Scientific Arms Race - Gizmodo" &bull; Wed, 09 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: Gizmodo &bull;
+          
+          
+            
+              <span class="tag-protected">&#9888; Protected (403)</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">OpenAI announced via blog post that an unreleased AI model, described as significantly more capable than GPT-6 Astra, was used to tackle the Navier-Stokes existence and smoothness problem. The solution emerged from a collaboration between human researchers and roughly 10,000 AI agents exploring the proof space. OpenAI stated it will not pursue the associated prize, emphasizing the collaborative nature of the breakthrough.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://techcrunch.com/sponsor/tether/on-device-ai-is-ready-to-challenge-cloud-dominance/" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">On-device AI Is ready to challenge cloud dominance - TechCrunch</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "On-device AI Is ready to challenge cloud dominance - TechCrunch" &bull; Mon, 14 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: TechCrunch &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Tether AI Research released VisionPsy-Nano, an open-source compact vision-language model designed for on-device and edge deployment. The model outperforms peers in its size class, such as Liquid AI’s LFM2.5-VL-450M and Hugging Face’s SmolVLM2-500M. This challenges the prevailing trend of scaling up data-centre AI by demonstrating strong performance locally.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://keeptrack.space/space-brief/space-brief-2026-09-13" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">NASA and IBM Launch Lunar AI Model, Space Brief 13 Sep 2026 - KeepTrack</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "NASA and IBM Launch Lunar AI Model, Space Brief 13 Sep 2026 - KeepTrack" &bull; Sun, 13 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: KeepTrack &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">NASA and IBM unveiled an AI foundation model tailored for lunar science research, aimed at analyzing Moon data. The model builds on prior work from the two organizations and is intended to support ongoing orbital missions. Its release coincides with a busy launch year, including the upcoming Vega-C launch of Sentinel-3C.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.techtimes.com/articles/327302/20260911/nasa-ibm-open-source-lunar-ai-that-pinpoints-moon-ice-22-more-accurately.htm" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">NASA and IBM Open-Source Lunar AI That Pinpoints Moon Ice 22% More Accurately</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "NASA and IBM Open-Source Lunar AI That Pinpoints Moon Ice 22% More Accurately" &bull; Fri, 11 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Infrastructure &amp; Tools</span> &bull; Source: TechTimes &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">NASA and IBM open-sourced a 600‑million‑parameter lunar AI model that earned the 2025 AGU Open Science Recognition Prize. The release accompanies related models such as Prithvi‑WxC for weather and Surya for heliophysics, with a Mars model in planning. The work is described in a paper titled “Multimodal‑Multiresolution Foundation …”.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://thejournal.com/articles/2026/09/10/ai-models-generate-advances-in-mathematical-research.aspx" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">AI Models Generate Advances in Mathematical Research - THE Journal: Technological Horizons in Education</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "AI Models Generate Advances in Mathematical Research - THE Journal: Technological Horizons in Education" &bull; Thu, 10 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: THE Journal &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">OpenAI reported that an internal AI system generated a proposed solution to the Navier‑Stokes existence and smoothness problem, while Anthropic cited advances in mathematics and formal proof generation. The piece highlights that formal verification tools like Lean will grow in importance as AI‑driven mathematical research expands. This underscores the need for rigorous validation of AI‑produced theorems.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
