@@ -1,0 +1,31 @@
+{
+  "track_a": {
+    "track": "Track A",
+    "wall_time_seconds": 31.3,
+    "prompt_tokens": 2905,
+    "completion_tokens": 2373,
+    "reasoning_tokens": 1533,
+    "total_tokens": 5278
+  },
+  "track_b": {
+    "track": "Track B",
+    "wall_time_seconds": 179.66,
+    "prompt_tokens": 7231,
+    "completion_tokens": 6070,
+    "reasoning_tokens": 5105,
+    "total_tokens": 13301,
+    "agent_turns": 3
+  },
+  "convergence": {
+    "matched_story_count": 0,
+    "convergence_percentage": 0.0,
+    "matches": []
+  },
+  "link_health": {
+    "healthy": 10,
+    "total": 10,
+    "pass_rate": 100.0
+  },
+  "total_experiment_tokens": 18579,
+  "total_experiment_wall_time": 210.96
+}

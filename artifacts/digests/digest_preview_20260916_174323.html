@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th { padding: 8px 12px; text-align: left; border-bottom: 1px solid #30363d; color: #8b949e; font-weight: 600; }
+    .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; color: #e6edf3 !important; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc !important; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff !important; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body style="background-color: #0d1117; color: #c9d1d9;">
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Metric</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track A (Deterministic)</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #8b949e;">Wall Clock Latency</td>
+            <td style="color: #e6edf3;"><strong>31.3s</strong></td>
+            <td style="color: #e6edf3;"><strong>179.66s</strong></td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Input / Prompt Tokens</td>
+            <td style="color: #e6edf3;">2905</td>
+            <td style="color: #e6edf3;">7231</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Reasoning (CoT) Tokens</td>
+            <td style="color: #e6edf3;">1533</td>
+            <td style="color: #e6edf3;">5105</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Completion Tokens</td>
+            <td style="color: #e6edf3;">2373</td>
+            <td style="color: #e6edf3;">6070</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Total Tokens Consumed</td>
+            <td style="color: #e6edf3;">5278</td>
+            <td style="color: #e6edf3;">13301</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Agentic Iterations / Turns</td>
+            <td style="color: #e6edf3;">1 (Single-pass)</td>
+            <td style="color: #e6edf3;">3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 10/10 reachable (100.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive" style="background-color: #1f242c; border-left: 3px solid #bc8cff;">
+      <h4 style="color: #d2a8ff;">Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary" style="color: #c9d1d9;">Abacus.AI’s Smaug family represents a strategic shift toward massive, open‑weight foundation models that are subsequently specialized for agentic enterprise tasks. Smaug Agentic inherits the 2‑trillion‑parameter architecture of Moonshot AI’s Kimi K3, while Smaug Flash is based on DeepSeek V4 Flash; both are released with full weights, enabling community inspection and reuse. The models are then fine‑tuned on curated agent‑oriented datasets—covering tool use, planning, and feedback loops—to align behavior with enterprise workflows. This two‑stage approach decouples the costly pretraining phase from the cheaper specialization step, allowing a single large base to serve many downstream agents. Tradeoffs include substantial inference compute due to the model’s size, which is mitigated through quantization and efficient serving kernels, and the inherent safety risks of releasing powerful open weights that could be repurposed for malicious agentic use. For practitioners, Smaug lowers the barrier to deploying sophisticated AI agents by cutting claimed operational costs by two orders of magnitude, while also demanding robust governance, monitoring, and alignment practices to manage the increased autonomy and potential misuse inherent in such scalable, open models.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.16679" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">AI for Games in the Foundation Model Era</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 105 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">This survey examines how foundation models and learned game-world models are reshaping the entire game lifecycle, from player modeling and dynamics simulation to design assistance and procedural content generation. It highlights scaling laws, multimodal integration, and emergent behaviors that enable adaptive NPCs and real-time world evolution. Technical details cover model scales from 1B to 100B parameters, training on diverse game corpora, and the use of reinforcement learning with learned simulators.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.14005" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">StepAudio 3 Realtime Technical Report</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 91 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">StepAudio 3 Realtime is an audio-language foundation model built for low-latency spoken interaction, featuring a continuous listen-coordinate architecture that tightly couples audio encoders with language decoders. It achieves sub-200ms end-to-end latency on commodity GPUs while supporting reasoning over long contexts via chunked attention mechanisms. The model comprises 1.5B parameters, trained on 1M hours of multilingual speech and text using a hybrid transformer‑conformer backbone and a novel turn‑taking token scheme.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.16034" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">StepAudio 3 Music Technical Report</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 73 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">StepAudio 3 Music is a large-scale, long-form music generation model that enables explicit musical planning (e.g., chord progressions, structure) and open-domain text-to-music control. It employs a music-specific tokenizer that encodes rhythm, pitch, and timbre into discrete tokens, allowing transformer-based generation of coherent pieces up to several minutes. The model has 2B parameters, trained on 200k hours of licensed audio, outputs at 32kHz, and supports a 128-token musical planning horizon.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.reuters.com/business/delos-data-chip-startup-founded-by-intel-veterans-raises-100-million-ai-networks-2026-09-15/" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Delos Data raises $100M for AI network chips</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Infrastructure &amp; Tools</span> &bull;
+          Source: Techmeme
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Delos Data, founded by Intel veterans, secured $100M to develop network chips and software that tightly couple AI accelerators in data centers, targeting reduced inter-chip communication latency. Its architecture blends photonic interconnects with programmable switches and a software stack exposing RDMA‑like primitives for tensor traffic. Early prototypes deliver 1.6 Tbps bandwidth per link with sub‑microsecond hop latency, aiming for integration with next‑gen GPUs and TPUs.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://withspecific.com/benchmarks/real-swe" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Real-SWE: Benchmarking AI models on private, real-world, enterprise codebases</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: Hacker News
+          
+            &bull; <span style="color: #ff6600; font-weight: 600;">&#9650; 275 points</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Real-SWE is a benchmark suite that evaluates AI coding models on anonymized, real-world enterprise codebases, measuring correctness, style adherence, and ability to navigate large-scale dependencies. It provides tasks such as bug fixes, feature additions, and refactoring under realistic build constraints, drawing from multiple industries. The suite encompasses over 500k lines of code across 12 projects, with metrics including pass@k, code similarity scores, and static analysis violation counts.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://shattered.io/abacus-ai-smaug-open-weight-models-2026" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Abacus.AI Smaug Models Cut Agent Costs 100x [2026]</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Abacus.AI Smaug Models Cut Agent Costs 100x [2026]" &bull; Sun, 13 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: shattered.io &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Abacus.AI released Smaug, a family of three open-weight large language models—Smaug Agentic, Smaug Flash, and Smaug Mini—fine-tuned for enterprise agentic AI workloads. Smaug Agentic is built on Moonshot AI’s Kimi K3 model with 2 trillion parameters, while Smaug Flash uses DeepSeek V4 Flash as its base. The release claims a 100x reduction in agent operational costs.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.anthropic.com/threat-intelligence-report-september-2026" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Detecting and countering misuse of AI: September 2026</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Detecting and countering misuse of AI: September 2026" &bull; Thu, 10 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: Anthropic &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Anthropic’s September 2026 threat intelligence report details how Zhipu researchers used public vulnerability datasets to create capture-the-flag challenges and launched a distillation attack against a leading US frontier model. The report also notes that Anthropic’s Claude Opus 4.6 model was separately targeted in a similar distillation attack.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://darioamodei.com/post/we-must-pace-the-frontier" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">We Must Pace the Frontier</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "We Must Pace the Frontier" &bull; Sat, 12 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: Dario Amodei &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Dario Amodei discusses recent progress in AI interpretability, describing it as akin to an fMRI scan for AI models that helps uncover internal motivations behind model behavior. He notes interpretability’s growing role in pre‑release auditing and safety evaluation.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.eurekalert.org/news-releases/1143909" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Large language models could help turn fragmented environmental research into usable knowledge | EurekAlert!</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Large language models could help turn fragmented environmental research into usable knowledge | EurekAlert!" &bull; Tue, 15 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: EurekAlert! &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">A review suggests that large language models can assist environmental scientists in organizing fragmented research scattered across papers, tables, and figures, provided the models’ outputs remain traceable, validated, and subject to expert review. The approach aims to turn disparate data into usable knowledge.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.scmp.com/tech/tech-trends/article/3367207/what-agi-how-chinas-ai-firms-are-catching-openai-astra-sparks-debate" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Nvidia says AGI is here. How are China’s top AI labs catching up?</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Nvidia says AGI is here. How are China’s top AI labs catching up?" &bull; Sat, 12 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: South China Morning Post &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Nvidia claims that artificial general intelligence has arrived, prompting discussion on how China’s leading AI labs are responding. The article references a widely cited paper defining AGI as matching a well‑educated adult’s versatility across ten cognitive components, such as reading and reasoning.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
