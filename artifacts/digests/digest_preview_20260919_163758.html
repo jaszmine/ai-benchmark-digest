@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th { padding: 8px 12px; text-align: left; border-bottom: 1px solid #30363d; color: #8b949e; font-weight: 600; }
+    .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; color: #e6edf3 !important; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc !important; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff !important; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body style="background-color: #0d1117; color: #c9d1d9;">
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Metric</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track A (Deterministic)</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #8b949e;">Wall Clock Latency</td>
+            <td style="color: #e6edf3;"><strong>20.64s</strong></td>
+            <td style="color: #e6edf3;"><strong>119.16s</strong></td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Input / Prompt Tokens</td>
+            <td style="color: #e6edf3;">2279</td>
+            <td style="color: #e6edf3;">7491</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Reasoning (CoT) Tokens</td>
+            <td style="color: #e6edf3;">1221</td>
+            <td style="color: #e6edf3;">5658</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Completion Tokens</td>
+            <td style="color: #e6edf3;">1926</td>
+            <td style="color: #e6edf3;">7020</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Total Tokens Consumed</td>
+            <td style="color: #e6edf3;">4205</td>
+            <td style="color: #e6edf3;">14511</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Agentic Iterations / Turns</td>
+            <td style="color: #e6edf3;">1 (Single-pass)</td>
+            <td style="color: #e6edf3;">3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 10/10 reachable (100.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive" style="background-color: #1f242c; border-left: 3px solid #bc8cff;">
+      <h4 style="color: #d2a8ff;">Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary" style="color: #c9d1d9;">IonQ’s award‑winning work demonstrates how a quantum‑classical hybrid architecture can accelerate AI‑related workloads by offloading computationally intensive subroutines to a quantum processing unit (QPU) while retaining classical control for data preprocessing, optimization, and result interpretation. The approach typically encodes classical data—such as model gradients, feature vectors, or matrix elements—into quantum states via amplitude or angle embedding, then applies a parameterized quantum circuit (e.g., a variational ansatz or quantum kernel) whose output is measured and fed back to a classical optimizer (e.g., COBYLA, Adam) that iteratively adjusts the circuit parameters to minimize a loss function. For tasks like fine‑tuning large language models, the hybrid loop can replace or augment classical optimizers in solving the underlying linear algebra problems (e.g., Hessian‑vector products) that dominate training time, potentially achieving quadratic speed‑ups for certain kernel methods. In protein folding, the quantum subroutine may sample conformational spaces more efficiently using quantum approximate optimization or quantum walk techniques, while classical molecular mechanics handle force‑field evaluations. Trade‑offs include qubit noise, limited coherence times, and overhead of data encoding/decoding, which can erode theoretical advantages unless problem sizes exceed a threshold where quantum advantage outweighs error mitigation costs. Practitioners must therefore benchmark hybrid kernels against highly tuned classical libraries (e.g., cuBLAS, MAGMA) and consider hybrid‑only for subproblems where the quantum component provides a clear asymptotic benefit, integrating results via established ML frameworks such as TensorFlow‑Quantum or Pennylane.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.19969" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 89 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Introduces a novel KV-cache compression scheme that reduces memory footprint for long-context LLMs by factorizing key and value matrices with low-rank approximations and adaptive quantization, enabling &gt;4x compression with minimal perplexity loss. Evaluated on DeepSeek-V4.1 across 32k-token contexts, showing throughput gains of 2.3x on A100 while preserving downstream performance. Addresses the prefill bottleneck for long-horizon agents.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.20744" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Video DeltaNet: A Video-Native Hybrid Attention for Livestream Video Generation</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 25 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Proposes DeltaNet, a hybrid attention mechanism combining linear complexity depthwise convolutions with sparse global attention tailored for spatiotemporal video tokens, reducing attention cost from O(T²) to O(T). Integrated into a video diffusion model, it enables real-time livestream generation at 30 fps on a single RTX 4090. Experiments show comparable FVD scores to full-attention baselines while cutting compute by 60%.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.20800" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">JEPA-Anything: Learning Predictive Models across Different Worlds</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 38 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Extends the Joint Embedding Predictive Architecture (JEPA) to learn domain-agnostic world models by training on heterogeneous datasets (simulated physics, Atari, and robotic manipulation) with a shared encoder and predictor, using a contrastive loss that aligns predictions across modalities. Demonstrates zero-shot transfer to unseen environments, improving sample efficiency by 35% in reinforcement learning benchmarks. Provides a unified framework for cross‑world prediction.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.20519" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">SoL-Pi: Recursively Scaling Auto-Research Loops for Efficient Agent Harness</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 69 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Introduces SoL-Pi, a recursive meta‑learning loop that allows an agent to autonomously generate, evaluate, and refine research hypotheses, using a learned reward model to prune unproductive trajectories. The system scales compute by allocating more iterations to promising branches, achieving a 4.2× improvement in paper‑generation quality on the arXiv‑CS benchmark over non‑recursive baselines. Includes ablation showing the importance of the self‑refinement step.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.17653" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Reflect, Revise, Reuse: Training-Free Skill Evolution for GUI Agents</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 25 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Presents a training‑free method where GUI agents extract successful interaction traces, reflect on failure modes, and revise skill policies via in‑context prompting and retrieval‑augmented adaptation, enabling reuse across apps without gradient updates. On the AndroidControl benchmark, the approach raises task success from 58% to 71% while reducing adaptation time from minutes to seconds. Shows that skill compositionality emerges from the reflection‑revision cycle.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://finance.yahoo.com/technology/ai/articles/ionq-earns-four-best-paper-130000331.html" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">IonQ Earns Four Best Paper Awards Ahead of IEEE Quantum Week 2026 for Breakthroughs in AI, Hybrid Computing, and Life Sciences</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "IonQ Earns Four Best Paper Awards Ahead of IEEE Quantum Week 2026 for Breakthroughs in AI, Hybrid Computing, and Life Sciences" &bull; Tue, 15 Sep 
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: IonQ &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">The IonQ team earned four best paper awards at IEEE Quantum Week 2026 for research showing how quantum-classical hybrid systems can accelerate AI model fine-tuning, protein folding, and large-scale linear algebra computations. The work was conducted with partners including QuantumBasel, NVIDIA, Synopsys, Oak Ridge National Laboratory, and Kipu Quantum.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://keeptrack.space/space-brief/space-brief-2026-09-13" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">NASA and IBM Launch Lunar AI Model, Space Brief 13 Sep 2026 - KeepTrack</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "NASA and IBM Launch Lunar AI Model, Space Brief 13 Sep 2026 - KeepTrack" &bull; Sun, 13 Sep 
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: NASA and IBM &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">NASA and IBM released an AI foundation model for lunar science research designed to analyze Moon data, building on their prior collaboration. The model was announced in a Space Brief issued September 13, 2026, amid 216 orbital launches in 2026 so far.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/the-top-trends-in-tech" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">McKinsey Technology Trends Outlook 2026</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "McKinsey Technology Trends Outlook 2026" &bull; Tue, 15 Sep 
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: McKinsey &bull;
+          
+          
+            
+              <span class="tag-protected">&#9888; Protected (403)</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">The report notes that while AI helps security teams detect and fix vulnerabilities faster, it also enables attackers to exploit them faster, exemplified by Anthropic’s Claude Mythos Preview which identified thousands of flaws and was shared only with defenders via Project Glasswing for validation and patching. This dual-use dynamic reflects the broader tension in AI-driven cybersecurity.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.reuters.com/technology/ex-google-deepmind-researcher-adds-warnings-that-ai-could-kill-all-humans-2026-09-15" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Ex-Google DeepMind researcher adds to warnings that AI could &#39;kill all humans&#39;</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Ex-Google DeepMind researcher adds to warnings that AI could &#39;kill all humans&#39;" &bull; Tue, 15 Sep 
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Policy &amp; Ethics</span> &bull; Source: Reuters &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">A former Google DeepMind researcher joined Anthropic CEO Dario Amodei, Elon Musk, and Sam Altman in calling for a slowdown in advanced AI development due to existential risks. They warned that safe navigation requires coordination to avoid a reckless race among AI companies.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.washingtonpost.com/technology/2026/09/13/he-was-close-1-million-breakthrough-then-openai-swooped" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">He was close to a huge math breakthrough. Then he got scooped by ...</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "He was close to a huge math breakthrough. Then he got scooped by ..." &bull; Sun, 13 Sep 
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull; Source: The Washington Post &bull;
+          
+          
+            
+              <span class="tag-protected">&#9888; Protected (403)</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">A New York University professor claims that OpenAI’s AI agents solved a complex theoretical mathematics problem that he had been working on, suggesting the model may have been trained on his unpublished work after he discussed the problem with the company. The incident raises questions about AI’s use of private research in problem-solving.</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
