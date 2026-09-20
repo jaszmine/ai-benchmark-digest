@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmark Telemetry Digest</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
+    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
+    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    .table-bench th { padding: 8px 12px; text-align: left; border-bottom: 1px solid #30363d; color: #8b949e; font-weight: 600; }
+    .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; color: #e6edf3 !important; }
+    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
+    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc !important; text-decoration: none; }
+    .story-title:hover { text-decoration: underline; color: #58a6ff !important; }
+    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
+    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
+    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
+    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
+    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
+    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
+    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
+    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+  </style>
+</head>
+<body style="background-color: #0d1117; color: #c9d1d9;">
+  <div class="container">
+    <div class="header">
+      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
+      <div class="subtitle">Parity Model: <code>nvidia/nemotron-3-super-120b-a12b:free</code> &bull; OpenRouter Free Tier</div>
+    </div>
+
+    <!-- Comparative Telemetry Scorecard -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+      <table class="table-bench">
+        <thead>
+          <tr>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Metric</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track A (Deterministic)</th>
+            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track B (Autonomous ReAct)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #8b949e;">Wall Clock Latency</td>
+            <td style="color: #e6edf3;"><strong>25.48s</strong></td>
+            <td style="color: #e6edf3;"><strong>101.51s</strong></td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Input / Prompt Tokens</td>
+            <td style="color: #e6edf3;">2013</td>
+            <td style="color: #e6edf3;">7551</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Reasoning (CoT) Tokens</td>
+            <td style="color: #e6edf3;">1145</td>
+            <td style="color: #e6edf3;">5146</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Completion Tokens</td>
+            <td style="color: #e6edf3;">1903</td>
+            <td style="color: #e6edf3;">7749</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Total Tokens Consumed</td>
+            <td style="color: #e6edf3;">3916</td>
+            <td style="color: #e6edf3;">15300</td>
+          </tr>
+          <tr>
+            <td style="color: #8b949e;">Agentic Iterations / Turns</td>
+            <td style="color: #e6edf3;">1 (Single-pass)</td>
+            <td style="color: #e6edf3;">3 turns</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
+        <strong>Story Convergence:</strong> 0.0% overlap &bull;
+        <strong>Link Health:</strong> 10/10 reachable (100.0%)
+      </div>
+    </div>
+
+    <!-- Track B Deep Dive -->
+    
+    <div class="card deep-dive" style="background-color: #1f242c; border-left: 3px solid #bc8cff;">
+      <h4 style="color: #d2a8ff;">Track B Flagship Breakthrough Deep-Dive</h4>
+      <div class="story-summary" style="color: #c9d1d9;">PrismML’s Ternary Bonsai 2 27B achieves a 9.1× size reduction by converting Alibaba’s Qwen3.8 27B into a ternary (−1,0,+1) weight representation. Instead of storing full‑precision FP16 values, each weight is encoded with roughly 1.71 bits via blockwise Hadamard rotation, a preprocessing step that spreads information across orthogonal bases before quantization, which mitigates the typical accuracy loss of low‑bit schemes. The rotated blocks are then quantized to three levels, yielding an effective storage of 5.9 GB from the original 54 GB. Despite the aggressive compression, the model retains 98.2% of aggregate benchmark scores, with near‑perfect math and coding retention, indicating that the rotation preserves the most salient directions in weight space. Inference speed benefits from the compact footprint: 142.5 tokens per second on an RTX 5090 and 46.8 tok/s on an M5 Max, allowing the model to reside in 16 GB of laptop RAM. Trade‑offs include reliance on custom kernels for the Hadamard rotation and potential sensitivity to outliers that ternary quantization cannot capture, which may affect niche tasks. The Apache 2.0 license encourages community adoption, and the approach demonstrates a viable path for deploying large language models on edge devices, reducing cloud inference costs while preserving most of the model’s capability.</div>
+    </div>
+    
+
+    <!-- Track A Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
+        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.19969" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Infrastructure &amp; Tools</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 131 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Introduces a novel KV cache compression scheme that drastically reduces memory footprint for long-context LLM inference while preserving generation quality. The method combines learned low-rank approximations with adaptive quantization, enabling sub‑linear cache growth relative to sequence length. Experiments show up to 4× reduction in cache size with negligible perplexity loss on benchmarks like PG-19 and BookCorpus.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.20800" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">JEPA-Anything: Learning Predictive Models across Different Worlds</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 55 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Extends the Joint Embedding Predictive Architecture (JEPA) to a unified framework that can learn predictive world models from heterogeneous data modalities (text, video, audio) without task‑specific heads. By training a shared encoder‑predictor pair on cross‑modal contrastive objectives, the model acquires transferable dynamics knowledge. Zero‑shot evaluation demonstrates strong simulation accuracy on unseen environments, suggesting a path toward general‑purpose world models.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.20744" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Video DeltaNet: A Video-Native Hybrid Attention for Livestream Video Generation</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 35 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Proposes DeltaNet, a hybrid attention mechanism that blends linear‑complexity depthwise convolutions with sparse global attention tailored to the spatiotemporal structure of video tokens. The design reduces the quadratic cost of standard attention in video diffusion models while preserving fine‑grained motion coherence. Livestream generation experiments achieve 2.3× speed‑up at 1080p with comparable FVD scores to baseline models.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.19499" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Sample Count Is Not Enough: Candidate-Generation Strategy Shapes the Energy and Performance of LLM Test-Time Scaling</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 32 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Analyzes test‑time scaling beyond mere sample count, showing that the strategy used to generate and aggregate candidates (e.g., diversity‑promoting sampling, weighted voting, or iterative refinement) critically impacts both computational energy and reasoning accuracy. The study introduces a unified energy‑performance frontier and proposes an adaptive allocation algorithm that dynamically selects generation tactics based on problem difficulty. Results on GSM‑8K and MATH show up to 30% energy savings for equivalent accuracy.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://arxiv.org/abs/2609.19671" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">When2Think: Learning Difficulty-Aware Length Control for Efficient Hybrid Reasoning Models</a>
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Research &amp; Papers</span> &bull;
+          Source: ArXiv
+          
+            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; 33 upvotes</span>
+          
+          &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Presents a length‑control module that learns to adjust the reasoning token budget of Large Reasoning Models (LRMs) based on estimated problem difficulty, mitigating overthinking on easy cases and underthinking on hard ones. The module is trained via reinforcement learning with a reward that balances correctness and generation cost. On benchmarks such as ARC‑Challenge and BigBench‑Reasoning, When2Think reduces average generation length by 22% while maintaining or improving accuracy.</div>
+      </div>
+      
+    </div>
+
+    <!-- Track B Results -->
+    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
+      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
+        Track B: Top 5 Curated (Autonomous ReAct Agent)
+      </div>
+      
+      <div class="story-item">
+        <a href="https://aiweekly.co/ai-news-today" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">AI News Today, September 20: Top Stories | AI Weekly</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "AI News Today, September 20: Top Stories | AI Weekly" &bull; Sun, 20 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: AI Weekly &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">PrismML released Ternary Bonsai 2 27B, a ternary-quantized (−1/0/+1) rewrite of Alibaba&#39;s Qwen3.8 27B that shrinks the model from 54GB to 5.9GB — 9.1x compression — while retaining 98.2% of aggregate benchmark performance across 20 evals (99.5% math retention, 99.3% coding). The Apache 2.0 model uses blockwise Hadamard rotation at 1.71 bits/weight, runs at 142.5 tok/s on RTX 5090 and 46.8 tok/s on M5 Max, and fits on 16GB laptops via PrismML&#39;s ll</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://sqmagazine.co.uk/ai-model-tracker" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Anthropic weighs new AI model launch as OpenAI gains ground</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Anthropic weighs new AI model launch as OpenAI gains ground" &bull; Wed, 16 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: SQ Magazine &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">The potential launch comes after OpenAI released GPT-6 Astra on September 3, with the model gaining traction among businesses and developers. Some prospective Anthropic investors are reassessing the company’s position in enterprise AI as a result. Recent usage data points to increased competition. GPT-6 Astra represented about 13% of enterprise AI spending tracked by corporate expense platform Ramp, compared with roughly 8% for Anthropic’s</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://ai.google.dev/gemini-api/docs/models" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Introducing Gemini 3.8 Live and 3.8 Live Extended Thinking</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Introducing Gemini 3.8 Live and 3.8 Live Extended Thinking" &bull; Thu, 17 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Industry &amp; Models</span> &bull; Source: Google AI for Developers &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Summaries were generated by Google AI. Generative AI is experimental. Google just launched two new AI models that make talking to your devices feel way more natural. They can handle interruptions, switch between languages, and even explain their thought process while they work. Whether you&#39;re solving a complex problem or just chatting, the AI now feels like it&#39;s actually listening and thinking along with you. It’s a big step toward making AI fee</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://www.cnbc.com/2026/09/14/microsoft-ai-model-limits-anthropic-openai.html" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">Microsoft sets AI model limits as industry throttles development - CNBC</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "Microsoft sets AI model limits as industry throttles development - CNBC" &bull; Mon, 14 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Policy &amp; Ethics</span> &bull; Source: CNBC &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">Microsoft chose to put out the guidelines now given the recent discourse, although they&#39;ve been in the works for about five months, said Suleyman. AI practitioners and members of the public have become more vocal about their worries as the technology becomes increasingly capable. Last week, Anthropic researcher Jacob Coxon resigned, saying the AI lab and OpenAI &#34;are racing straight to self-improving superintelligence and gambling with our lives.</div>
+      </div>
+      
+      <div class="story-item">
+        <a href="https://fortune.com/2026/09/14/openai-may-have-violated-californias-ai-safety-law-with-astra-model-releases-ai-watchdog-says" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">OpenAI may have violated California’s AI safety law with latest model releases, AI watchdog says | Fortune</a>
+        
+        <div class="original-title" style="color: #8b949e;">
+          "OpenAI may have violated California’s AI safety law with latest model releases, AI watchdog says | Fortune" &bull; Mon, 14 Sep
+        </div>
+        
+        <div class="story-meta" style="color: #8b949e;">
+          <span class="badge">Policy &amp; Ethics</span> &bull; Source: Fortune &bull;
+          
+          
+            
+              <span class="tag-live">&#10003; 200 OK</span>
+            
+          
+        </div>
+        <div class="story-summary" style="color: #c9d1d9;">But OpenAI has not assigned risk tiers for any of the categories in its major model releases since publishing the policy document in May. That includes GPT-5.6 preview released in June, GPT-5.6 model released in July, and last week’s debut of GPT-6 Astra. There is no section in the models’ system cards that correspond to any of the four categories, and no mention of the tiers OpenAI laid out. OpenAI CEO Sam Altman. A nonprofit watchdog has</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
