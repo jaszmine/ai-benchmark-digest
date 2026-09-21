@@ -3,179 +3,226 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Benchmark Telemetry Digest</title>
+  <title>{{ digest_title }}</title>
   <style>
-    body { margin: 0; padding: 0; background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #c9d1d9; }
-    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
-    .header { border-bottom: 1px solid #30363d; padding-bottom: 16px; margin-bottom: 24px; }
-    .title { color: #58a6ff; font-size: 22px; font-weight: 700; margin: 0; }
-    .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
-    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 12px; background: #21262d; border: 1px solid #30363d; color: #79c0ff; }
-    .card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
-    .table-bench { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
-    .table-bench th { padding: 8px 12px; text-align: left; border-bottom: 1px solid #30363d; color: #8b949e; font-weight: 600; }
-    .table-bench td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #21262d; color: #e6edf3 !important; }
-    .story-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #21262d; }
-    .story-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-    .story-title { font-size: 15px; font-weight: 600; color: #f0f6fc !important; text-decoration: none; }
-    .story-title:hover { text-decoration: underline; color: #58a6ff !important; }
-    .original-title { font-size: 12px; color: #8b949e; font-style: italic; margin-top: 3px; }
-    .story-meta { font-size: 12px; color: #8b949e; margin: 5px 0 8px 0; }
-    .story-summary { font-size: 13px; line-height: 1.5; color: #c9d1d9; }
-    .tag-live { color: #3fb950; font-size: 11px; font-weight: 600; }
-    .tag-protected { color: #58a6ff; font-size: 11px; font-weight: 600; }
-    .tag-dead { color: #f85149; font-size: 11px; font-weight: 600; }
-    .deep-dive { background: #1f242c; border-left: 3px solid #bc8cff; padding: 14px; border-radius: 0 6px 6px 0; }
-    .deep-dive h4 { margin: 0 0 8px 0; color: #d2a8ff; font-size: 14px; }
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .header {
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      color: #58a6ff;
+      font-size: 24px;
+      margin: 0 0 6px 0;
+    }
+    .meta {
+      color: #8b949e;
+      font-size: 13px;
+    }
+    .card {
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: #f0f6fc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .table-bench {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .table-bench th, .table-bench td {
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid #21262d;
+    }
+    .table-bench th {
+      color: #8b949e;
+      font-weight: 500;
+    }
+    .story-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #21262d;
+    }
+    .story-item:last-child {
+      border-bottom: none;
+    }
+    .story-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #58a6ff;
+      text-decoration: none;
+    }
+    .story-title:hover {
+      text-decoration: underline;
+    }
+    .story-meta {
+      font-size: 12px;
+      color: #8b949e;
+      margin: 4px 0 6px 0;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 4px;
+      background-color: #21262d;
+      color: #79c0ff;
+      border: 1px solid #388bfd;
+      margin-right: 6px;
+    }
+    .story-summary {
+      font-size: 13px;
+      color: #c9d1d9;
+      line-height: 1.45;
+    }
+    .deep-dive {
+      background-color: #0d1117;
+      border-left: 3px solid #8957e5;
+      padding: 12px 16px;
+      margin-top: 14px;
+      border-radius: 0 6px 6px 0;
+    }
+    .deep-dive-title {
+      color: #d2a8ff;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
   </style>
 </head>
-<body style="background-color: #0d1117; color: #c9d1d9;">
+<body>
   <div class="container">
     <div class="header">
-      <div class="title">AI Benchmark Digest: Deterministic vs Agentic</div>
-      <div class="subtitle">Parity Model: <code>{{ model_name }}</code> &bull; OpenRouter Free Tier</div>
+      <h1>{{ digest_title }}</h1>
+      <div class="meta">Comparative Evaluation: Track A (Heuristic Pipeline) vs. Track B (Autonomous ReAct) &bull; {{ run_timestamp }}</div>
     </div>
 
-    <!-- Comparative Telemetry Scorecard -->
-    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
-      <div style="font-size: 15px; font-weight: 600; color: #f0f6fc;">Telemetry & Convergence Scorecard</div>
+    <!-- BENCHMARK SCORECARD -->
+    <div class="card">
+      <div class="card-title">Telemetry & Execution Scorecard</div>
       <table class="table-bench">
         <thead>
           <tr>
-            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Metric</th>
-            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track A (Deterministic)</th>
-            <th style="color: #8b949e; border-bottom: 1px solid #30363d;">Track B (Autonomous ReAct)</th>
+            <th>Telemetry Metric</th>
+            <th>Track A: Deterministic Heuristic</th>
+            <th>Track B: Autonomous ReAct</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="color: #8b949e;">Wall Clock Latency</td>
-            <td style="color: #e6edf3;"><strong>{{ scorecard.track_a.wall_time_seconds }}s</strong></td>
-            <td style="color: #e6edf3;"><strong>{{ scorecard.track_b.wall_time_seconds }}s</strong></td>
+            <td>Wall Clock Latency</td>
+            <td><strong>{{ telemetry_a.wall_time_seconds }}s</strong></td>
+            <td><strong>{{ telemetry_b.wall_time_seconds }}s</strong></td>
           </tr>
           <tr>
-            <td style="color: #8b949e;">Input / Prompt Tokens</td>
-            <td style="color: #e6edf3;">{{ scorecard.track_a.prompt_tokens }}</td>
-            <td style="color: #e6edf3;">{{ scorecard.track_b.prompt_tokens }}</td>
+            <td>Input / Prompt Tokens</td>
+            <td>{{ "{:,}".format(telemetry_a.prompt_tokens) }}</td>
+            <td>{{ "{:,}".format(telemetry_b.prompt_tokens) }}</td>
           </tr>
           <tr>
-            <td style="color: #8b949e;">Reasoning (CoT) Tokens</td>
-            <td style="color: #e6edf3;">{{ scorecard.track_a.reasoning_tokens }}</td>
-            <td style="color: #e6edf3;">{{ scorecard.track_b.reasoning_tokens }}</td>
+            <td>Reasoning (CoT) Tokens</td>
+            <td>{{ "{:,}".format(telemetry_a.reasoning_tokens) }}</td>
+            <td>{{ "{:,}".format(telemetry_b.reasoning_tokens) }}</td>
           </tr>
           <tr>
-            <td style="color: #8b949e;">Completion Tokens</td>
-            <td style="color: #e6edf3;">{{ scorecard.track_a.completion_tokens }}</td>
-            <td style="color: #e6edf3;">{{ scorecard.track_b.completion_tokens }}</td>
+            <td>Completion Tokens</td>
+            <td>{{ "{:,}".format(telemetry_a.completion_tokens) }}</td>
+            <td>{{ "{:,}".format(telemetry_b.completion_tokens) }}</td>
           </tr>
           <tr>
-            <td style="color: #8b949e;">Total Tokens Consumed</td>
-            <td style="color: #e6edf3;">{{ scorecard.track_a.total_tokens }}</td>
-            <td style="color: #e6edf3;">{{ scorecard.track_b.total_tokens }}</td>
+            <td>Total Tokens Consumed</td>
+            <td><strong>{{ "{:,}".format(telemetry_a.total_tokens) }}</strong></td>
+            <td><strong>{{ "{:,}".format(telemetry_b.total_tokens) }}</strong></td>
           </tr>
           <tr>
-            <td style="color: #8b949e;">Agentic Iterations / Turns</td>
-            <td style="color: #e6edf3;">1 (Single-pass)</td>
-            <td style="color: #e6edf3;">{{ scorecard.track_b.agent_turns }} turns</td>
+            <td>Agentic Iterations / Turns</td>
+            <td>1 (Deterministic batch)</td>
+            <td><strong>{{ telemetry_b.turns }} turn(s)</strong></td>
           </tr>
         </tbody>
       </table>
-      <div style="margin-top: 14px; font-size: 13px; color: #8b949e;">
-        <strong>Story Convergence:</strong> {{ scorecard.convergence.convergence_percentage }}% overlap &bull;
-        <strong>Link Health:</strong> {{ scorecard.link_health.healthy }}/{{ scorecard.link_health.total }} reachable ({{ scorecard.link_health.pass_rate }}%)
-      </div>
     </div>
 
-    <!-- Track B Deep Dive -->
-    {% if track_b.deep_dive %}
-    <div class="card deep-dive" style="background-color: #1f242c; border-left: 3px solid #bc8cff;">
-      <h4 style="color: #d2a8ff;">Track B Flagship Breakthrough Deep-Dive</h4>
-      <div class="story-summary" style="color: #c9d1d9;">{{ track_b.deep_dive }}</div>
-    </div>
-    {% endif %}
-
-    <!-- Track A Results -->
-    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
-      <div style="font-size: 16px; font-weight: 600; color: #58a6ff; margin-bottom: 12px;">
-        Track A: Top 5 Curated (Deterministic Heuristic Pipeline)
+    <!-- TRACK A -->
+    <div class="card">
+      <div class="card-title" style="color: #58a6ff;">
+        <span>Track A: Top Curated Stories (Heuristic Pipeline)</span>
       </div>
       {% for story in track_a.stories %}
       <div class="story-item">
-        <a href="{{ story.url }}" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">{{ story.title }}</a>
-        <div class="story-meta" style="color: #8b949e;">
-          <span class="badge">{{ story.category.value if story.category.value is defined else story.category }}</span> &bull;
+        <div>
+          <span class="badge">{{ story.category }}</span>
+          <a href="{{ story.url }}" class="story-title" target="_blank">{{ story.title }}</a>
+        </div>
+        <div class="story-meta">
           Source: {{ story.source }}
           {% if story.published_date_str %}
             &bull; {{ story.published_date_str }}
           {% endif %}
-          {% if ("ArXiv" in story.source or "arxiv" in story.url) and story.upvotes %}
-            &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; {{ story.upvotes }} upvotes</span>
+          {% if "ArXiv" in story.source and story.upvotes %}
+            &bull; <span style="color: #58a6ff; font-weight: 600;">▲ {{ story.upvotes }} HF upvotes</span>
           {% elif "Hacker News" in story.source and story.upvotes %}
-            &bull; <span style="color: #ff6600; font-weight: 600;">&#9650; {{ story.upvotes }} points</span>
-          {% endif %}
-          &bull;
-          {% set link_info = links.get(story.url, {}) %}
-          {% if link_info is mapping %}
-            {% if link_info.is_protected %}
-              <span class="tag-protected">&#9888; Protected ({{ link_info.status }})</span>
-            {% elif link_info.healthy %}
-              <span class="tag-live">&#10003; 200 OK</span>
-            {% else %}
-              <span class="tag-dead">&#10007; Status {{ link_info.status }}</span>
-            {% endif %}
-          {% else %}
-            {% if link_info in [401, 403] %}
-              <span class="tag-protected">&#9888; Protected ({{ link_info }})</span>
-            {% elif link_info == 200 %}
-              <span class="tag-live">&#10003; 200 OK</span>
-            {% else %}
-              <span class="tag-dead">&#10007; Status {{ link_info }}</span>
-            {% endif %}
+            &bull; <span style="color: #ff9f43; font-weight: 600;">▲ {{ story.upvotes }} HN pts</span>
+          {% elif "Normal Technology" in story.source and story.upvotes %}
+            &bull; <span style="color: #ff4757; font-weight: 600;">❤ {{ story.upvotes }} likes</span>
           {% endif %}
         </div>
-        <div class="story-summary" style="color: #c9d1d9;">{{ story.summary }}</div>
+        <div class="story-summary">{{ story.technical_summary }}</div>
       </div>
       {% endfor %}
     </div>
 
-    <!-- Track B Results -->
-    <div class="card" style="background-color: #161b22; border: 1px solid #30363d;">
-      <div style="font-size: 16px; font-weight: 600; color: #bc8cff; margin-bottom: 12px;">
-        Track B: Top 5 Curated (Autonomous ReAct Agent)
+    <!-- TRACK B -->
+    <div class="card">
+      <div class="card-title" style="color: #bc8cff;">
+        <span>Track B: Top Curated Stories (Autonomous ReAct)</span>
       </div>
       {% for story in track_b.stories %}
       <div class="story-item">
-        <a href="{{ story.url }}" class="story-title" target="_blank" style="color: #f0f6fc !important; text-decoration: none;">{{ story.title }}</a>
-        {% if story.original_title %}
-        <div class="original-title" style="color: #8b949e;">
-          "{{ story.original_title }}"{% if story.published_date_str %} &bull; {{ story.published_date_str }}{% endif %}
+        <div>
+          <span class="badge" style="border-color: #bc8cff; color: #d2a8ff;">{{ story.category }}</span>
+          <a href="{{ story.url }}" class="story-title" style="color: #bc8cff;" target="_blank">{{ story.title }}</a>
         </div>
-        {% endif %}
-        <div class="story-meta" style="color: #8b949e;">
-          <span class="badge">{{ story.category.value if story.category.value is defined else story.category }}</span> &bull; Source: {{ story.source }} &bull;
-          {% set link_info = links.get(story.url, {}) %}
-          {% if link_info is mapping %}
-            {% if link_info.is_protected %}
-              <span class="tag-protected">&#9888; Protected ({{ link_info.status }})</span>
-            {% elif link_info.healthy %}
-              <span class="tag-live">&#10003; 200 OK</span>
-            {% else %}
-              <span class="tag-dead">&#10007; Status {{ link_info.status }}</span>
-            {% endif %}
-          {% else %}
-            {% if link_info in [401, 403] %}
-              <span class="tag-protected">&#9888; Protected ({{ link_info }})</span>
-            {% elif link_info == 200 %}
-              <span class="tag-live">&#10003; 200 OK</span>
-            {% else %}
-              <span class="tag-dead">&#10007; Status {{ link_info }}</span>
-            {% endif %}
+        <div class="story-meta">
+          Source: {{ story.source }}
+          {% if story.published_date_str %}
+            &bull; {{ story.published_date_str }}
           {% endif %}
         </div>
-        <div class="story-summary" style="color: #c9d1d9;">{{ story.summary }}</div>
+        <div class="story-summary">{{ story.technical_summary }}</div>
       </div>
       {% endfor %}
+
+      {% if deep_dive %}
+      <div class="deep-dive">
+        <div class="deep-dive-title">Track B Deep-Dive Analysis: {{ deep_dive.title }}</div>
+        <div style="font-size: 13px; line-height: 1.5; color: #c9d1d9;">{{ deep_dive.analysis }}</div>
+      </div>
+      {% endif %}
     </div>
+
   </div>
 </body>
 </html>

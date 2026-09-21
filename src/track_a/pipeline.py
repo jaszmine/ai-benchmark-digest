@@ -1,7 +1,9 @@
+import asyncio
 from datetime import datetime
 import json
 import re
 import time
+from zoneinfo import ZoneInfo
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
@@ -12,6 +14,7 @@ from src.track_a.heuristics import filter_and_rank
 from src.track_a.ingest import ingest_all
 
 settings = get_settings()
+CENTRAL_TZ = ZoneInfo("America/Chicago")
 
 
 def get_llm() -> ChatOpenAI:
@@ -28,18 +31,27 @@ def get_llm() -> ChatOpenAI:
     )
 
 
-EXTRACTION_PROMPT = """You are an expert AI systems curator.
-Given the following pre-ranked list of AI developments from the last 7 days, you MUST select exactly 5 most impactful and technical stories. Do not return fewer than 5 stories.
+EXTRACTION_PROMPT = """You are an expert AI systems curator and technical editor.
+Your job is to select the 5 most technically significant, diverse, and impactful AI stories from the provided candidate list.
+
+Rules:
+1. Select EXACTLY 5 stories.
+2. Maintain balance across categories:
+   - "Research & Papers" (breakthrough architectures, theoretical results)
+   - "Industry & Models" (major frontier model releases, frontier lab announcements)
+   - "Infrastructure & Tools" (runtimes, training clusters, inference optimization, developer tooling)
+   - "Policy & Ethics" (governance, evals, empirical AI capability assessments, copyright)
+3. For each selected story, write a concise 2-sentence summary explaining what was achieved and why it matters.
 
 Return a valid JSON object matching this schema:
 {
   "stories": [
     {
-      "title": "Clear technical headline",
-      "url": "Canonical link from the candidate",
+      "title": "Exact candidate title",
+      "url": "Exact candidate URL",
       "category": "Research & Papers | Industry & Models | Infrastructure & Tools | Policy & Ethics",
       "summary": "2-3 dense sentences explaining what it is, why it matters, and technical specs.",
-      "source": "ArXiv | Techmeme | Hacker News"
+      "source": "Exact source from candidate (e.g. ArXiv (via Hugging Face), Techmeme, Hacker News, AI as Normal Technology)"
     }
   ]
 }
@@ -68,21 +80,27 @@ async def run_track_a() -> tuple[TrackOutput, dict]:
     raw = await ingest_all()
     ranked = filter_and_rank(raw, lookback_days=settings.lookback_days)
 
-    # Pure deterministic ranking: top candidates strictly by composite score
+    # Pure deterministic ranking: take top 20 candidates strictly by heuristic score
     CANDIDATE_POOL_SIZE = 20
     top_candidates = ranked[:CANDIDATE_POOL_SIZE]
 
-    # Map signals: ArXiv upvotes, Hacker News community points, and publication dates
+    # Map signals and publication dates
     signal_map: dict[str, int] = {}
-    date_map: dict[str, datetime] = {}
+    date_map: dict[str, tuple[datetime, str]] = {}
+    source_map: dict[str, str] = {}
 
     for c in top_candidates:
         clean_url = c.url.rstrip("/")
-        date_map[clean_url] = c.published_at
+        pub_dt = c.published_at
+        formatted_date = pub_dt.strftime("%a, %d %b %Y")
+        
+        date_map[clean_url] = (pub_dt, formatted_date)
+        source_map[clean_url] = c.source
 
         aid = extract_arxiv_id(c.url)
         if aid:
-            date_map[aid] = c.published_at
+            date_map[aid] = (pub_dt, formatted_date)
+            source_map[aid] = c.source
 
         if "ArXiv" in c.source:
             raw_upvotes = int(round(c.score / 1.5)) if c.score else 0
@@ -90,15 +108,18 @@ async def run_track_a() -> tuple[TrackOutput, dict]:
             if aid:
                 signal_map[aid] = raw_upvotes
         elif "Hacker News" in c.source:
-            # Matches: "(HN Points: 333)" or "(HN Community Points: 333)"
             match = re.search(r"HN (?:Community )?Points:\s*(\d+)", c.raw_text)
+            if match:
+                signal_map[clean_url] = int(match.group(1))
+        elif "Normal Technology" in c.source:
+            match = re.search(r"Likes:\s*(\d+)", c.raw_text)
             if match:
                 signal_map[clean_url] = int(match.group(1))
 
     payload = []
     for idx, c in enumerate(top_candidates, 1):
         payload.append(
-            f"{idx}. [{c.source}] {c.title} (URL: {c.url})\nSnippet: {c.raw_text[:200]}"
+            f"[{idx}] Source: {c.source}\nTitle: {c.title}\nURL: {c.url}\nScore: {c.score}\nInfo: {c.raw_text}"
         )
 
     formatted_input = "\n\n".join(payload)
@@ -106,7 +127,7 @@ async def run_track_a() -> tuple[TrackOutput, dict]:
 
     messages = [
         SystemMessage(
-            content="You extract high-signal technical AI breakthroughs into strict JSON format. You must select exactly 5 stories."
+            content="You extract high-signal technical AI breakthroughs across research, industry, tooling, and policy into strict JSON format. You must select exactly 5 stories."
         ),
         HumanMessage(content=EXTRACTION_PROMPT + formatted_input),
     ]
@@ -146,16 +167,15 @@ async def run_track_a() -> tuple[TrackOutput, dict]:
     stories = []
     for s in raw_stories:
         url_val = s.get("url", "").rstrip("/")
-        if not s.get("source"):
-            if "arxiv" in url_val.lower():
-                s["source"] = "ArXiv"
-            elif any(k in url_val.lower() for k in ["techmeme", "theinformation", "techcrunch"]):
-                s["source"] = "Techmeme"
-            else:
-                s["source"] = "Industry & Models"
-
-        # Populate community signal (ArXiv upvotes or HN points)
         aid = extract_arxiv_id(url_val)
+
+        # Retain original candidate source name if matched
+        matched_source = source_map.get(url_val) or (source_map.get(aid) if aid else None)
+        if not matched_source:
+            matched_source = s.get("source", "Techmeme")
+        s["source"] = matched_source
+
+        # Map community signal
         if url_val in signal_map:
             s["upvotes"] = signal_map[url_val]
         elif aid and aid in signal_map:
@@ -163,12 +183,20 @@ async def run_track_a() -> tuple[TrackOutput, dict]:
         else:
             s["upvotes"] = None
 
-        # Populate publication timestamp and formatted date
-        pub_dt = date_map.get(url_val) or (date_map.get(aid) if aid else None)
-        if pub_dt:
+        # Populate publication timestamp and formatted date string
+        pub_info = date_map.get(url_val) or (date_map.get(aid) if aid else None)
+        if pub_info:
+            pub_dt, pub_str = pub_info
             s["published_at"] = pub_dt
-            s["published_date_str"] = pub_dt.strftime("%a, %d %b")
+            s["published_date_str"] = pub_str
 
         stories.append(StoryItem(**s))
 
     return TrackOutput(track_name="Track A", stories=stories), telemetry
+
+
+if __name__ == "__main__":
+    out, tel = asyncio.run(run_track_a())
+    print(f"Track A produced {len(out.stories)} stories in {tel['wall_time_seconds']}s")
+    for st in out.stories:
+        print(f"- [{st.category}] {st.title} ({st.source}) - {getattr(st, 'published_date_str', 'No date')}")
