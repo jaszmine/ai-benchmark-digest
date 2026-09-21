@@ -105,6 +105,9 @@
         <div class="story-meta" style="color: #8b949e;">
           <span class="badge">{{ story.category.value if story.category.value is defined else story.category }}</span> &bull;
           Source: {{ story.source }}
+          {% if story.published_date_str %}
+            &bull; {{ story.published_date_str }}
+          {% endif %}
           {% if ("ArXiv" in story.source or "arxiv" in story.url) and story.upvotes %}
             &bull; <span style="color: #f0883e; font-weight: 600;">&#9650; {{ story.upvotes }} upvotes</span>
           {% elif "Hacker News" in story.source and story.upvotes %}
