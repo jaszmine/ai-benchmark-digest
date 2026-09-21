@@ -407,18 +407,23 @@ def generate_dashboard():
         "Infrastructure & Tools",
         "Policy & Ethics",
     ]
-    track_a_all_cats = [c for r in runs for c in r["track_a"]["categories"]]
-    track_b_all_cats = [c for r in runs for c in r["track_b"]["categories"]]
-    counts_a = Counter(track_a_all_cats)
-    counts_b = Counter(track_b_all_cats)
 
-    all_sources = [s for r in runs for s in r["sources"]]
-    source_counts = Counter(all_sources).most_common(8)
-
-    avg_age_per_run = [
-        round(sum(r["age_deltas"]) / len(r["age_deltas"]), 1) if r["age_deltas"] else None
-        for r in runs
-    ]
+    # Calculate granular publication age per track
+    track_a_ages = []
+    track_b_ages = []
+    for r in runs:
+        a_deltas = [
+            s["age_days"]
+            for s in r["stories"]
+            if s["track"] == "Track A" and isinstance(s["age_days"], (int, float))
+        ]
+        b_deltas = [
+            s["age_days"]
+            for s in r["stories"]
+            if s["track"] == "Track B" and isinstance(s["age_days"], (int, float))
+        ]
+        track_a_ages.append(round(sum(a_deltas) / len(a_deltas), 1) if a_deltas else 0.0)
+        track_b_ages.append(round(sum(b_deltas) / len(b_deltas), 1) if b_deltas else 0.0)
 
     chart_payload = {
         "labels": [f"Run {i+1} ({r['formatted_time']})" for i, r in enumerate(runs)],
@@ -441,14 +446,14 @@ def generate_dashboard():
         "tokens_per_turn": [r["track_b"]["tokens_per_turn"] for r in runs],
         "category_diversity": {
             "labels": standard_categories,
-            "track_a": [counts_a.get(c, 0) for c in standard_categories],
-            "track_b": [counts_b.get(c, 0) for c in standard_categories],
+            "track_a_runs": [r["track_a"]["categories"] for r in runs],
+            "track_b_runs": [r["track_b"]["categories"] for r in runs],
         },
-        "publisher_attribution": {
-            "labels": [s[0] for s in source_counts],
-            "counts": [s[1] for s in source_counts],
+        "publisher_attribution_runs": [r["sources"] for r in runs],
+        "publication_age_delta": {
+            "track_a": track_a_ages,
+            "track_b": track_b_ages,
         },
-        "publication_age_delta": avg_age_per_run,
         "runs_stories": [r["stories"] for r in runs],
         "digest_urls": [r["relative_url"] for r in runs],
     }
@@ -498,6 +503,7 @@ def generate_dashboard():
       font-size: 13px;
       font-weight: 500;
       transition: all 0.2s ease;
+      cursor: pointer;
     }
     .nav-btn:hover {
       background: #30363d;
@@ -507,6 +513,40 @@ def generate_dashboard():
       background: #1f6feb;
       color: #ffffff;
       border-color: #388bfd;
+    }
+    .filter-btn {
+      background: #21262d;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .filter-btn:hover {
+      background: #30363d;
+      color: #f0f6fc;
+    }
+    .filter-btn.active {
+      background: #238636;
+      color: #ffffff;
+      border-color: #2ea043;
+    }
+    .chart-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     h1 { color: #58a6ff; font-size: 24px; margin: 0; }
     .subtitle { color: #8b949e; font-size: 13px; margin-top: 6px; }
@@ -523,14 +563,14 @@ def generate_dashboard():
       padding: 20px;
       margin-bottom: 20px;
     }
-    h2 { color: #f0f6fc; font-size: 15px; margin: 0 0 16px 0; }
+    h2 { color: #f0f6fc; font-size: 14px; margin: 0; }
     select {
       background: #21262d;
       color: #f0f6fc;
       border: 1px solid #30363d;
       border-radius: 6px;
-      padding: 6px 12px;
-      font-size: 13px;
+      padding: 3px 6px;
+      font-size: 11px;
     }
     table.detail-table {
       width: 100%;
@@ -564,45 +604,142 @@ def generate_dashboard():
       </div>
     </div>
 
+    <!-- 1. TOKENS BREAKDOWN (Default: All-Time) -->
     <div class="chart-card">
-      <h2>1. Token Breakdown by Track (Hover for Prompt / CoT / Completion details)</h2>
+      <div class="chart-header">
+        <h2>1. Token Breakdown by Track (Prompt / CoT / Completion)</h2>
+        <div class="chart-controls">
+          <div style="display: flex; gap: 3px;">
+            <button class="filter-btn active" id="tok-btn-all" onclick="applyPreset('tok', 'all')">All Time</button>
+            <button class="filter-btn" id="tok-btn-steady" onclick="applyPreset('tok', 'steady')">Steady (5+)</button>
+            <button class="filter-btn" id="tok-btn-14" onclick="applyPreset('tok', 14)">Last 14</button>
+            <button class="filter-btn" id="tok-btn-7" onclick="applyPreset('tok', 7)">Last 7</button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 3px; font-size: 11px; color: #8b949e; margin-left: 4px;">
+            <select id="tokStartSelect" onchange="applyCustomRange('tok')"></select>
+            <span>-</span>
+            <select id="tokEndSelect" onchange="applyCustomRange('tok')"></select>
+          </div>
+        </div>
+      </div>
       <canvas id="tokensChart" height="90"></canvas>
     </div>
 
     <div class="grid-2">
+      <!-- 2. WALL-CLOCK LATENCY (Default: Last 14) -->
       <div class="chart-card">
-        <h2>2. Wall-Clock Execution Latency (Seconds)</h2>
+        <div class="chart-header">
+          <h2>2. Latency (Seconds)</h2>
+          <div class="chart-controls">
+            <div style="display: flex; gap: 3px;">
+              <button class="filter-btn" id="lat-btn-all" onclick="applyPreset('lat', 'all')">All</button>
+              <button class="filter-btn" id="lat-btn-steady" onclick="applyPreset('lat', 'steady')">5+</button>
+              <button class="filter-btn active" id="lat-btn-14" onclick="applyPreset('lat', 14)">L14</button>
+              <button class="filter-btn" id="lat-btn-7" onclick="applyPreset('lat', 7)">L7</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 3px; font-size: 11px; color: #8b949e;">
+              <select id="latStartSelect" onchange="applyCustomRange('lat')"></select>
+              <span>-</span>
+              <select id="latEndSelect" onchange="applyCustomRange('lat')"></select>
+            </div>
+          </div>
+        </div>
         <canvas id="latencyChart" height="150"></canvas>
       </div>
 
+      <!-- 3. AGENT EFFICIENCY (Default: All-Time) -->
       <div class="chart-card">
-        <h2>3. Track B Agent Search Efficiency (Tokens / Turn)</h2>
+        <div class="chart-header">
+          <h2>3. Agent Efficiency (Tokens / Turn)</h2>
+          <div class="chart-controls">
+            <div style="display: flex; gap: 3px;">
+              <button class="filter-btn active" id="eff-btn-all" onclick="applyPreset('eff', 'all')">All</button>
+              <button class="filter-btn" id="eff-btn-steady" onclick="applyPreset('eff', 'steady')">5+</button>
+              <button class="filter-btn" id="eff-btn-14" onclick="applyPreset('eff', 14)">L14</button>
+              <button class="filter-btn" id="eff-btn-7" onclick="applyPreset('eff', 7)">L7</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 3px; font-size: 11px; color: #8b949e;">
+              <select id="effStartSelect" onchange="applyCustomRange('eff')"></select>
+              <span>-</span>
+              <select id="effEndSelect" onchange="applyCustomRange('eff')"></select>
+            </div>
+          </div>
+        </div>
         <canvas id="efficiencyChart" height="150"></canvas>
       </div>
     </div>
 
     <div class="grid-2">
+      <!-- 4. TOPIC DIVERSITY RADAR (Default: Last 14) -->
       <div class="chart-card">
-        <h2>4. Topic & Domain Diversity Bias (Radar)</h2>
+        <div class="chart-header">
+          <h2>4. Topic Diversity Bias (Radar)</h2>
+          <div class="chart-controls">
+            <div style="display: flex; gap: 3px;">
+              <button class="filter-btn" id="rad-btn-all" onclick="applyPreset('rad', 'all')">All</button>
+              <button class="filter-btn" id="rad-btn-steady" onclick="applyPreset('rad', 'steady')">5+</button>
+              <button class="filter-btn active" id="rad-btn-14" onclick="applyPreset('rad', 14)">L14</button>
+              <button class="filter-btn" id="rad-btn-7" onclick="applyPreset('rad', 7)">L7</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 3px; font-size: 11px; color: #8b949e;">
+              <select id="radStartSelect" onchange="applyCustomRange('rad')"></select>
+              <span>-</span>
+              <select id="radEndSelect" onchange="applyCustomRange('rad')"></select>
+            </div>
+          </div>
+        </div>
         <canvas id="radarChart" height="150"></canvas>
       </div>
 
+      <!-- 5. PUBLISHER ATTRIBUTION (Default: Last 14, Top 15 Sources) -->
       <div class="chart-card">
-        <h2>5. Top Publisher Attribution Frequency</h2>
-        <canvas id="publisherChart" height="150"></canvas>
+        <div class="chart-header">
+          <h2>5. Publisher Attribution (Top 15)</h2>
+          <div class="chart-controls">
+            <div style="display: flex; gap: 3px;">
+              <button class="filter-btn" id="pub-btn-all" onclick="applyPreset('pub', 'all')">All</button>
+              <button class="filter-btn" id="pub-btn-steady" onclick="applyPreset('pub', 'steady')">5+</button>
+              <button class="filter-btn active" id="pub-btn-14" onclick="applyPreset('pub', 14)">L14</button>
+              <button class="filter-btn" id="pub-btn-7" onclick="applyPreset('pub', 7)">L7</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 3px; font-size: 11px; color: #8b949e;">
+              <select id="pubStartSelect" onchange="applyCustomRange('pub')"></select>
+              <span>-</span>
+              <select id="pubEndSelect" onchange="applyCustomRange('pub')"></select>
+            </div>
+          </div>
+        </div>
+        <canvas id="publisherChart" height="220"></canvas>
       </div>
     </div>
 
+    <!-- 6. PUBLICATION AGE DELTA (Default: Last 14) -->
     <div class="chart-card">
-      <h2>6. Publication Age Delta (Average Days Between Story Publish Date & Benchmark Run)</h2>
-      <canvas id="ageChart" height="75"></canvas>
+      <div class="chart-header">
+        <h2>6. Publication Age Delta (Days Between Published & Run Time)</h2>
+        <div class="chart-controls">
+          <div style="display: flex; gap: 3px;">
+            <button class="filter-btn" id="age-btn-all" onclick="applyPreset('age', 'all')">All Time</button>
+            <button class="filter-btn" id="age-btn-steady" onclick="applyPreset('age', 'steady')">Steady (5+)</button>
+            <button class="filter-btn active" id="age-btn-14" onclick="applyPreset('age', 14)">Last 14</button>
+            <button class="filter-btn" id="age-btn-7" onclick="applyPreset('age', 7)">Last 7</button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 3px; font-size: 11px; color: #8b949e; margin-left: 4px;">
+            <select id="ageStartSelect" onchange="applyCustomRange('age')"></select>
+            <span>-</span>
+            <select id="ageEndSelect" onchange="applyCustomRange('age')"></select>
+          </div>
+        </div>
+      </div>
+      <canvas id="ageChart" height="85"></canvas>
     </div>
 
+    <!-- ARTICLE DETAIL TABLE -->
     <div class="chart-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
         <h2>Article Recency Breakdown</h2>
         <div style="display: flex; gap: 8px; align-items: center;">
-          <select id="runSelect" onchange="updateStoryTable(this.value)"></select>
+          <select id="runSelect" onchange="updateStoryTable(this.value)" style="padding: 6px 12px; font-size: 13px;"></select>
           <a id="viewDigestLink" href="digests.html" class="nav-btn" style="font-size: 12px; padding: 5px 10px;">Open Digest ↗</a>
         </div>
       </div>
@@ -624,7 +761,8 @@ def generate_dashboard():
   <script>
     const data = """ + raw_json + """;
 
-    new Chart(document.getElementById('tokensChart').getContext('2d'), {
+    // 1. CHART: TOKENS
+    const tokensChart = new Chart(document.getElementById('tokensChart').getContext('2d'), {
       type: 'bar',
       data: {
         labels: data.labels,
@@ -650,7 +788,8 @@ def generate_dashboard():
       }
     });
 
-    new Chart(document.getElementById('latencyChart').getContext('2d'), {
+    // 2. CHART: LATENCY
+    const latencyChart = new Chart(document.getElementById('latencyChart').getContext('2d'), {
       type: 'bar',
       data: {
         labels: data.labels,
@@ -672,7 +811,8 @@ def generate_dashboard():
       }
     });
 
-    new Chart(document.getElementById('efficiencyChart').getContext('2d'), {
+    // 3. CHART: EFFICIENCY
+    const efficiencyChart = new Chart(document.getElementById('efficiencyChart').getContext('2d'), {
       type: 'line',
       data: {
         labels: data.labels,
@@ -683,7 +823,7 @@ def generate_dashboard():
           backgroundColor: 'rgba(240, 136, 62, 0.15)',
           fill: true,
           tension: 0.3,
-          pointRadius: 5
+          pointRadius: 4
         }]
       },
       options: {
@@ -699,21 +839,22 @@ def generate_dashboard():
       }
     });
 
-    new Chart(document.getElementById('radarChart').getContext('2d'), {
+    // 4. CHART: RADAR
+    const radarChart = new Chart(document.getElementById('radarChart').getContext('2d'), {
       type: 'radar',
       data: {
         labels: data.category_diversity.labels,
         datasets: [
           {
             label: 'Track A (Deterministic)',
-            data: data.category_diversity.track_a,
+            data: [0, 0, 0, 0],
             backgroundColor: 'rgba(88, 166, 255, 0.25)',
             borderColor: '#58a6ff',
             pointBackgroundColor: '#58a6ff'
           },
           {
             label: 'Track B (Autonomous ReAct)',
-            data: data.category_diversity.track_b,
+            data: [0, 0, 0, 0],
             backgroundColor: 'rgba(188, 140, 255, 0.25)',
             borderColor: '#bc8cff',
             pointBackgroundColor: '#bc8cff'
@@ -726,7 +867,7 @@ def generate_dashboard():
           r: {
             grid: { color: '#30363d' },
             angleLines: { color: '#30363d' },
-            pointLabels: { color: '#c9d1d9', font: { size: 11 } },
+            pointLabels: { color: '#c9d1d9', font: { size: 10 } },
             ticks: { display: false }
           }
         },
@@ -736,13 +877,14 @@ def generate_dashboard():
       }
     });
 
-    new Chart(document.getElementById('publisherChart').getContext('2d'), {
+    // 5. CHART: PUBLISHER ATTRIBUTION
+    const publisherChart = new Chart(document.getElementById('publisherChart').getContext('2d'), {
       type: 'bar',
       data: {
-        labels: data.publisher_attribution.labels,
+        labels: [],
         datasets: [{
           label: 'Stories Surfaced',
-          data: data.publisher_attribution.counts,
+          data: [],
           backgroundColor: '#238636',
           borderRadius: 4
         }]
@@ -756,31 +898,49 @@ def generate_dashboard():
         },
         scales: {
           x: { ticks: { color: '#8b949e', stepSize: 1 }, grid: { color: '#21262d' } },
-          y: { ticks: { color: '#c9d1d9' }, grid: { display: false } }
+          y: { ticks: { color: '#c9d1d9', font: { size: 11 } }, grid: { display: false } }
         }
       }
     });
 
-    new Chart(document.getElementById('ageChart').getContext('2d'), {
-      type: 'bar',
+    // 6. CHART: AGE DELTA
+    const ageChart = new Chart(document.getElementById('ageChart').getContext('2d'), {
+      type: 'line',
       data: {
         labels: data.labels,
-        datasets: [{
-          label: 'Avg Days Since Published',
-          data: data.publication_age_delta,
-          backgroundColor: '#d29922',
-          borderRadius: 4
-        }]
+        datasets: [
+          {
+            label: 'Track A: Heuristic Pipeline (Days)',
+            data: data.publication_age_delta.track_a,
+            borderColor: '#58a6ff',
+            backgroundColor: 'rgba(88, 166, 255, 0.12)',
+            borderWidth: 2,
+            pointRadius: 3.5,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#58a6ff',
+            tension: 0.25,
+            fill: true
+          },
+          {
+            label: 'Track B: Autonomous ReAct (Days)',
+            data: data.publication_age_delta.track_b,
+            borderColor: '#bc8cff',
+            backgroundColor: 'rgba(188, 140, 255, 0.12)',
+            borderWidth: 2,
+            pointRadius: 3.5,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#bc8cff',
+            tension: 0.25,
+            fill: true
+          }
+        ]
       },
       options: {
         responsive: true,
+        interaction: { mode: 'index', intersect: false },
         plugins: {
-          tooltip: {
-            callbacks: {
-              label: (c) => c.parsed.y !== null ? c.parsed.y + ' days old' : 'No date data available'
-            }
-          },
-          legend: { labels: { color: '#c9d1d9' } }
+          tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.y !== null ? c.parsed.y + ' days' : 'No data'}` } },
+          legend: { labels: { color: '#c9d1d9', font: { size: 10 } } }
         },
         scales: {
           x: { ticks: { color: '#8b949e', maxRotation: 20 }, grid: { color: '#21262d' } },
@@ -789,12 +949,136 @@ def generate_dashboard():
             suggestedMax: 7,
             ticks: { color: '#8b949e' },
             grid: { color: '#21262d' },
-            title: { display: true, text: 'Days', color: '#8b949e' }
+            title: { display: true, text: 'Days Old', color: '#8b949e' }
           }
         }
       }
     });
 
+    // POPULATE DROPDOWNS ACROSS ALL CHARTS
+    const prefixes = ['tok', 'lat', 'eff', 'rad', 'pub', 'age'];
+    prefixes.forEach(p => {
+      const sSel = document.getElementById(p + 'StartSelect');
+      const eSel = document.getElementById(p + 'EndSelect');
+      data.labels.forEach((lbl, idx) => {
+        const oA = document.createElement('option');
+        oA.value = idx;
+        oA.textContent = `R${idx + 1}`;
+        sSel.appendChild(oA);
+
+        const oB = document.createElement('option');
+        oB.value = idx;
+        oB.textContent = `R${idx + 1}`;
+        eSel.appendChild(oB);
+      });
+    });
+
+    function updateChartSlice(chartKey, startIdx, endIdx) {
+      const s = Math.max(0, Math.min(startIdx, endIdx));
+      const e = Math.min(data.labels.length - 1, Math.max(startIdx, endIdx)) + 1;
+      const slicedLabels = data.labels.slice(s, e);
+
+      if (chartKey === 'tok') {
+        tokensChart.data.labels = slicedLabels;
+        tokensChart.data.datasets[0].data = data.tokens_stacked.track_a.prompt.slice(s, e);
+        tokensChart.data.datasets[1].data = data.tokens_stacked.track_a.reasoning.slice(s, e);
+        tokensChart.data.datasets[2].data = data.tokens_stacked.track_a.completion.slice(s, e);
+        tokensChart.data.datasets[3].data = data.tokens_stacked.track_b.prompt.slice(s, e);
+        tokensChart.data.datasets[4].data = data.tokens_stacked.track_b.reasoning.slice(s, e);
+        tokensChart.data.datasets[5].data = data.tokens_stacked.track_b.completion.slice(s, e);
+        tokensChart.update();
+      } else if (chartKey === 'lat') {
+        latencyChart.data.labels = slicedLabels;
+        latencyChart.data.datasets[0].data = data.latency.track_a.slice(s, e);
+        latencyChart.data.datasets[1].data = data.latency.track_b.slice(s, e);
+        latencyChart.update();
+      } else if (chartKey === 'eff') {
+        efficiencyChart.data.labels = slicedLabels;
+        efficiencyChart.data.datasets[0].data = data.tokens_per_turn.slice(s, e);
+        efficiencyChart.update();
+      } else if (chartKey === 'rad') {
+        const catsA = data.category_diversity.track_a_runs.slice(s, e).flat();
+        const catsB = data.category_diversity.track_b_runs.slice(s, e).flat();
+        const countsA = {};
+        const countsB = {};
+        data.category_diversity.labels.forEach(lbl => { countsA[lbl] = 0; countsB[lbl] = 0; });
+        catsA.forEach(c => { if (countsA[c] !== undefined) countsA[c]++; });
+        catsB.forEach(c => { if (countsB[c] !== undefined) countsB[c]++; });
+        radarChart.data.datasets[0].data = data.category_diversity.labels.map(l => countsA[l]);
+        radarChart.data.datasets[1].data = data.category_diversity.labels.map(l => countsB[l]);
+        radarChart.update();
+      } else if (chartKey === 'pub') {
+        const sources = data.publisher_attribution_runs.slice(s, e).flat();
+        const counts = {};
+        sources.forEach(src => { counts[src] = (counts[src] || 0) + 1; });
+        // Top 15 publishers/sources
+        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 15);
+        publisherChart.data.labels = sorted.map(x => x[0]);
+        publisherChart.data.datasets[0].data = sorted.map(x => x[1]);
+        publisherChart.update();
+      } else if (chartKey === 'age') {
+        ageChart.data.labels = slicedLabels;
+        ageChart.data.datasets[0].data = data.publication_age_delta.track_a.slice(s, e);
+        ageChart.data.datasets[1].data = data.publication_age_delta.track_b.slice(s, e);
+        const maxVal = Math.max(...ageChart.data.datasets[0].data, ...ageChart.data.datasets[1].data);
+        if (s === 0 && maxVal > 15) {
+          ageChart.options.scales.y.max = 15;
+        } else {
+          delete ageChart.options.scales.y.max;
+        }
+        ageChart.update();
+      }
+    }
+
+    function applyPreset(chartKey, preset) {
+      document.querySelectorAll(`[id^="${chartKey}-btn-"]`).forEach(b => b.classList.remove('active'));
+      const total = data.labels.length;
+      let start = 0;
+      let end = total - 1;
+
+      if (preset === 'all') {
+        document.getElementById(`${chartKey}-btn-all`).classList.add('active');
+        start = 0;
+      } else if (preset === 'steady') {
+        document.getElementById(`${chartKey}-btn-steady`).classList.add('active');
+        start = Math.min(4, total - 1);
+      } else if (typeof preset === 'number') {
+        document.getElementById(`${chartKey}-btn-${preset}`).classList.add('active');
+        start = Math.max(0, total - preset);
+      }
+
+      document.getElementById(`${chartKey}StartSelect`).value = start;
+      document.getElementById(`${chartKey}EndSelect`).value = end;
+      updateChartSlice(chartKey, start, end);
+    }
+
+    function applyCustomRange(chartKey) {
+      document.querySelectorAll(`[id^="${chartKey}-btn-"]`).forEach(b => b.classList.remove('active'));
+      const s = parseInt(document.getElementById(`${chartKey}StartSelect`).value, 10);
+      const e = parseInt(document.getElementById(`${chartKey}EndSelect`).value, 10);
+      updateChartSlice(chartKey, s, e);
+    }
+
+    // INITIALIZE DEFAULTS:
+    // Chart 1 (Tokens): All Time
+    applyPreset('tok', 'all');
+
+    // Chart 2 (Latency): Last 14
+    applyPreset('lat', 14);
+
+    // Chart 3 (Efficiency): All Time
+    applyPreset('eff', 'all');
+
+    // Chart 4 (Radar): Last 14
+    applyPreset('rad', 14);
+
+    // Chart 5 (Publisher): Last 14
+    applyPreset('pub', 14);
+
+    // Chart 6 (Age Delta): Last 14
+    applyPreset('age', 14);
+
+    // RUN SELECTOR & STORY TABLE
     const selectElem = document.getElementById('runSelect');
     const viewDigestLink = document.getElementById('viewDigestLink');
 
